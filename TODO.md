@@ -23,6 +23,11 @@ Last reviewed: 2026-06-24
 - [ ] Confirm **HIPAA scope** for self-administered + employer-distributed flow.
 - [ ] Confirm **MediaPipe is the production scoring path**, not the deterministic fallback
       (`README.md`). The quality gate is meaningless without it.
+- [ ] **Rotation-accuracy validation** — Tier-1 synthetic analysis DONE
+      ([docs/self-guided-assessment/rotation-accuracy-findings.md](docs/self-guided-assessment/rotation-accuracy-findings.md)):
+      trunk gate rides on uncalibrated z-scale + a `max()` inflation bug; cervical metric is blind to
+      slide/side-bend confounds. Next: robust-peak estimator fix, ear-based cervical feature, Tier-3
+      ground-truth capture.
 - [ ] Personal **mobile camera-prop reality test** for all 5 movements to calibrate coaching copy.
 
 ### 🔲 Phase 2 — Remaining
