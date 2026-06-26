@@ -26,8 +26,14 @@ Last reviewed: 2026-06-24
 - [ ] **Rotation-accuracy validation** — Tier-1 synthetic analysis DONE
       ([docs/self-guided-assessment/rotation-accuracy-findings.md](docs/self-guided-assessment/rotation-accuracy-findings.md)):
       trunk gate rides on uncalibrated z-scale + a `max()` inflation bug; cervical metric is blind to
-      slide/side-bend confounds. Next: robust-peak estimator fix, ear-based cervical feature, Tier-3
-      ground-truth capture.
+      slide/side-bend confounds.
+  - [x] (a) Robust-peak estimator fix — `_robust_max`/`_min`/`_span` replace raw `max()`/`min()`/span.
+  - [x] (b) Ear-visibility cervical yaw prototype — proven to reject the slide/side-bend confounds
+        ([models/cervical_ear_yaw_model.py](docs/self-guided-assessment/models/cervical_ear_yaw_model.py));
+        logged as non-gating debug metric `ear_visibility_asymmetry`.
+  - [ ] (c) **Tier-3 ground-truth capture** — protocol drafted
+        ([docs/self-guided-assessment/tier3-capture-protocol.md](docs/self-guided-assessment/tier3-capture-protocol.md));
+        blocked on a capture session. Feeds threshold re-tuning (`calibration.py`) + augment-vs-replace call.
 - [ ] Personal **mobile camera-prop reality test** for all 5 movements to calibrate coaching copy.
 
 ### 🔲 Phase 2 — Remaining
