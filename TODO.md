@@ -3,7 +3,7 @@
 Consolidated task list for both the AI app (`api/` + `web/`) and the Manual sister app (`HMA-Manual/`).
 Source of truth for the AI roadmap is [docs/self-guided-assessment/phase-plan.md](docs/self-guided-assessment/phase-plan.md).
 
-Last reviewed: 2026-06-24
+Last reviewed: 2026-06-26
 
 ---
 
