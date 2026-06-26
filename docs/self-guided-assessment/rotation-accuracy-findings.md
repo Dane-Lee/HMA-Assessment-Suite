@@ -5,7 +5,19 @@ Tier-1 synthetic analysis of the two rotation movements' scoring gates. Asks one
 Short answer: not without the fixes below. The two gates fail for *opposite* reasons, and both
 ride on the same `max()`-over-frames estimator bug.
 
-Date: 2026-06-25. Owner: Dane. Status: analysis complete, no code changed yet.
+Date: 2026-06-25. Owner: Dane. Status: analysis complete; follow-up fixes (a) and (b) have since landed (see below).
+
+> **Implementation status (updated 2026-06-26, branch `rotation-accuracy`).** Two of this doc's
+> recommendations are now in code:
+> - **(a) Robust-peak reducers** replaced the raw `max()`/`min()`/span reducers across the feature
+>   layer (`_robust_max` / `_robust_min` / `_robust_span` in
+>   [extractors.py](../../api/app/services/scoring/extractors.py)). Where the analysis below says
+>   "`max()` inflates ...", production now smooths-then-reduces. Thresholds still need re-tuning
+>   against labeled data before the new absolute values can be trusted at the gate.
+> - **(b) Ear-visibility yaw cue** is prototyped and proven against the confounds in
+>   [models/cervical_ear_yaw_model.py](./models/cervical_ear_yaw_model.py), and is now logged as a
+>   non-gating debug metric (`ear_visibility_asymmetry`) on every capture.
+> - **(c) Tier-3 ground-truth capture protocol:** [tier3-capture-protocol.md](./tier3-capture-protocol.md).
 
 > **What "Tier 1" means / what is NOT claimed here.** This is a *synthetic* analysis — geometric
 > forward models that reproduce the exact production metrics, run against plausible parameter ranges.
@@ -137,9 +149,15 @@ severity** above ~50° — relevant when the REBA / safety-manager translation l
 
 A pure head-slide does not change which ear is visible; a real rotation does.
 `left_ear_visibility` / `right_ear_visibility` are already computed
-([extractors.py:195-196](../../api/app/services/scoring/extractors.py#L195-L196)) but **never used**.
+([extractors.py:227-228](../../api/app/services/scoring/extractors.py#L227-L228)) but were never used.
 Ear-visibility asymmetry (optionally with nose-to-ear geometry) is a far more direct yaw cue that
 *rejects* the translation/side-bend confounds. This is the highest-leverage cervical fix.
+
+> **Prototyped (b).** [models/cervical_ear_yaw_model.py](./models/cervical_ear_yaw_model.py) models
+> ear visibility as a logistic of yaw and shows that at the *same* nose-x displacement the gate reads
+> as "pass", ear-asymmetry is ~0.35 for a true ~23 deg turn but ~0 for a 4 cm head-slide or a 10 deg
+> side-bend — and stays ~0 no matter how large the confound grows. It is now logged as a non-gating
+> debug metric `ear_visibility_asymmetry` so real captures accumulate it for Tier-3 calibration.
 
 ---
 
@@ -178,11 +196,14 @@ a feature that measures the wrong thing.
 ## 6. Recommended next actions
 
 **No new data required:**
-1. **Replace `max()`/`min()` reducers with a robust peak** (smooth-then-max, or a high percentile)
-   across the feature layer. Removes the +9° trunk inflation and the cervical equivalent. Requires
-   threshold re-tuning afterward.
-2. **Prototype an ear-visibility-asymmetry cervical feature** and show it rejects the head-slide /
-   side-bend confounds that the current nose-x metric cannot.
+1. ✅ **DONE — Replaced `max()`/`min()` reducers with a robust peak** (edge-padded rolling median,
+   then reduce) across the feature layer (`_robust_max` / `_robust_min` / `_robust_span`). Removes the
+   +9° trunk inflation and the cervical equivalent. Threshold re-tuning still pending labeled data.
+2. ✅ **DONE — Prototyped an ear-visibility-asymmetry cervical feature** and showed it rejects the
+   head-slide / side-bend confounds the nose-x metric cannot
+   ([models/cervical_ear_yaw_model.py](./models/cervical_ear_yaw_model.py)); logged as the non-gating
+   debug metric `ear_visibility_asymmetry`. Whether it augments or replaces the nose-x gate is a
+   Tier-3 decision.
 
 **Needs a capture session (Tier 3) — now scoped by this analysis:**
 3. **Trunk:** goniometer / floor-marked angles concentrated in the **40–55° band** (where the gray
@@ -206,17 +227,21 @@ a feature that measures the wrong thing.
 
 ## 8. Reproducing
 
-Two standalone models (numpy only; run with the repo venv):
+Three standalone models (numpy only; run with the repo venv):
 
 - [./models/trunk_rotation_risk_model.py](./models/trunk_rotation_risk_model.py) — sections A (scale
   bias), B (gate misclassification), C0/C (max inflation), D (jitter sensitivity), E (estimator
   comparison).
 - [./models/cervical_rotation_validity_model.py](./models/cervical_rotation_validity_model.py) —
   sections A (transfer curve), B (confounds), C (saturation), D (shared max inflation).
+- [./models/cervical_ear_yaw_model.py](./models/cervical_ear_yaw_model.py) — the (b) prototype:
+  A (ear-asymmetry transfer curve), B/B2 (confound rejection vs nose-x), C (separability under
+  visibility noise), D (robustness to the sharpness/noise the Tier-3 capture would pin down).
 
 ```
 .venv/Scripts/python.exe docs/self-guided-assessment/models/trunk_rotation_risk_model.py
 .venv/Scripts/python.exe docs/self-guided-assessment/models/cervical_rotation_validity_model.py
+.venv/Scripts/python.exe docs/self-guided-assessment/models/cervical_ear_yaw_model.py
 ```
 
 Key assumptions (swept, not asserted as truth): shoulder width 0.16 normalized / 32–40 cm; nose

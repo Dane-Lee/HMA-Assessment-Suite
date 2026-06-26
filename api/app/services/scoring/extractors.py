@@ -354,6 +354,20 @@ class HybridFeatureExtractor:
             abs(frame.nose_x - mid_shoulder_x[index]) / shoulder_widths[index]
             for index, frame in enumerate(frames)
         ]
+        # Yaw-specific cue (prototype, non-gating): a real axial head turn makes one ear face
+        # the camera while the other self-occludes, so their MediaPipe visibilities split apart;
+        # a pure head-slide or side-bend leaves both ears facing the same way (asymmetry ~0).
+        # The production chin_midline_clearance_ratio (lateral nose-x) cannot tell those apart.
+        # Logged in debug_metrics only so real captures accumulate it for the Tier-3 study; it is
+        # NOT a fault input yet (see docs/self-guided-assessment/models/cervical_ear_yaw_model.py).
+        ear_visibility_asymmetry = [
+            abs(frame.left_ear_visibility - frame.right_ear_visibility) for frame in frames
+        ]
+        ear_visibility_asymmetry_norm = [
+            abs(frame.left_ear_visibility - frame.right_ear_visibility)
+            / (frame.left_ear_visibility + frame.right_ear_visibility + EPSILON)
+            for frame in frames
+        ]
         nose_vertical_path = [frame.nose_y for frame in frames]
         shoulder_depth = [
             abs(frame.left_shoulder_z - frame.right_shoulder_z) / shoulder_widths[index]
@@ -529,6 +543,9 @@ class HybridFeatureExtractor:
             "shoulder_drift_ratio": features.shoulder_drift_ratio,
             "forward_head_ratio": features.forward_head_ratio,
             "neck_path_deviation_ratio": features.neck_path_deviation_ratio,
+            # cervical rotation — prototype yaw cue, non-gating (rejects slide/side-bend confounds)
+            "ear_visibility_asymmetry": _robust_max(ear_visibility_asymmetry),
+            "ear_visibility_asymmetry_norm": _robust_max(ear_visibility_asymmetry_norm),
             # trunk rotation
             "trunk_rotation_angle_degrees": features.trunk_rotation_angle_degrees,
             "lower_extremity_movement_ratio": features.lower_extremity_movement_ratio,
