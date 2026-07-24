@@ -45,7 +45,7 @@ describe("NewAssessmentPage", () => {
     expect(screen.queryByText(/confidence/i)).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText(/participant name/i), { target: { value: "Jordan" } });
-    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByLabelText(/participation is voluntary/i));
     fireEvent.click(screen.getByRole("button", { name: /create manual assessment/i }));
 
     await waitFor(() => {

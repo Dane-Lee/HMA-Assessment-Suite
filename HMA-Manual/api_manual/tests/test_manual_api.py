@@ -120,6 +120,42 @@ def test_manual_score_and_review_video_lifecycle() -> None:
     assert body["review_videos"][0]["deleted_at"] is not None
 
 
+def test_oa_pain_and_hypermobility_flags_round_trip() -> None:
+    tmp_path = make_test_dir("flags")
+    app = create_app(make_settings(tmp_path))
+    client = TestClient(app)
+    login(client)
+
+    created = client.post(
+        "/api/assessments",
+        json={"participant_name": "Casey Jones", "consent": consent(), "has_oa": True},
+    )
+    assert created.status_code == 201
+    assessment_id = created.json()["id"]
+    assert created.json()["has_oa"] is True
+
+    scored = client.post(
+        f"/api/assessments/{assessment_id}/movements/forward_lunge/manual-score",
+        json={
+            "right": {"score": 2, "faults": [], "pain": True},
+            "left": {"score": 3, "faults": []},
+            "hypermobile": True,
+        },
+    )
+    assert scored.status_code == 200
+    result = next(r for r in scored.json()["movement_results"] if r["movement_key"] == "forward_lunge")
+    assert result["final_score"] == 2  # lower side
+    assert result["hypermobile"] is True
+    assert result["right_pain"] is True
+    assert result["left_pain"] is False
+
+    # OA can be toggled after creation and persists on reload.
+    patched = client.patch(f"/api/assessments/{assessment_id}", json={"has_oa": False})
+    assert patched.status_code == 200
+    assert patched.json()["has_oa"] is False
+    assert client.get(f"/api/assessments/{assessment_id}").json()["has_oa"] is False
+
+
 def test_employee_upload_session_is_scoped_to_assessment() -> None:
     tmp_path = make_test_dir("employee-upload")
     app = create_app(make_settings(tmp_path))

@@ -31,6 +31,9 @@ export type ManualMovementResult = {
   right_score: number | null;
   left_score: number | null;
   final_score: number;
+  hypermobile: boolean;
+  right_pain: boolean;
+  left_pain: boolean;
   faults: Record<string, string[]>;
   provider_note: string | null;
   reviewed_at: string;
@@ -72,6 +75,7 @@ export type ManualAssessmentSummary = {
   status: "draft" | "completed" | string;
   total_score: number;
   score_band: string;
+  has_oa: boolean;
   consent_notice_version: string | null;
   consent_scope: Record<string, boolean> | null;
   created_at: string;
@@ -90,12 +94,14 @@ export type ManualAssessmentDetail = ManualAssessmentSummary & {
 export type ManualSideScorePayload = {
   score: number;
   faults: string[];
+  pain?: boolean;
 };
 
 export type ManualScorePayload = {
   right?: ManualSideScorePayload;
   left?: ManualSideScorePayload;
   provider_note?: string;
+  hypermobile?: boolean;
 };
 
 export type Employee = {

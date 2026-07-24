@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { completeAssessment, deleteAllReviewVideos, getAssessment, listMovements } from "../lib/api";
 import { bandTone, formatTimestamp, prettyFault } from "../lib/formatters";
+import { copyTrackerExport, downloadTrackerExport } from "../lib/trackerExport";
 import type { ManualAssessmentDetail, MovementDefinition } from "../lib/types";
 
 export function AssessmentResultsPage() {
@@ -10,6 +11,7 @@ export function AssessmentResultsPage() {
   const [assessment, setAssessment] = useState<ManualAssessmentDetail | null>(null);
   const [movements, setMovements] = useState<MovementDefinition[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   async function refresh() {
     const [nextAssessment, nextMovements] = await Promise.all([getAssessment(assessmentId), listMovements()]);
@@ -29,6 +31,17 @@ export function AssessmentResultsPage() {
     if (!confirmed) return;
     const response = await deleteAllReviewVideos(assessment.id);
     setAssessment(response.assessment);
+  }
+
+  async function handleCopyForTracker() {
+    if (!assessment) return;
+    try {
+      await copyTrackerExport(assessment);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to copy export.");
+    }
   }
 
   async function handleComplete() {
@@ -93,6 +106,24 @@ export function AssessmentResultsPage() {
         <p className="mt-2 text-sm text-ink/60">
           Videos are deleted on provider confirmation or retention expiry. Structured manual scores remain.
         </p>
+      </section>
+
+      <section className="card">
+        <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Corrective Exercise Tracker</p>
+        <h3 className="mt-1 text-lg font-semibold">Send scores to the Tracker</h3>
+        <p className="mt-2 text-sm text-ink/70">
+          Exports this assessment (scores, pain, hypermobility, and OA flags) in the Tracker's format. In the
+          Corrective Exercise Tracker, open <strong>Import → Paste JSON</strong> and paste, or import the downloaded
+          file. The Tracker turns it into a corrective exercise plan.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button className="button-primary" onClick={() => downloadTrackerExport(assessment)} type="button">
+            Download for Tracker
+          </button>
+          <button className="button-secondary" onClick={() => void handleCopyForTracker()} type="button">
+            {copied ? "Copied!" : "Copy JSON"}
+          </button>
+        </div>
       </section>
 
       <section className="grid gap-3">

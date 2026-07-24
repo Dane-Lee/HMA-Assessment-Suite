@@ -221,6 +221,7 @@ class ManualRepository:
         consent_notice_version: str,
         consent_scope: dict[str, bool],
         retention_days: int,
+        has_oa: bool = False,
     ) -> dict[str, Any]:
         created_at = now_utc()
         record = {
@@ -231,6 +232,7 @@ class ManualRepository:
             "status": "draft",
             "total_score": 0,
             "score_band": compute_score_band(0),
+            "has_oa": 1 if has_oa else 0,
             "consent_notice_version": consent_notice_version,
             "consent_scope_json": json.dumps(consent_scope, sort_keys=True),
             "created_at": created_at.isoformat(),
@@ -241,12 +243,12 @@ class ManualRepository:
                 """
                 INSERT INTO manual_assessments (
                     id, participant_name, employee_id, created_by_provider_id,
-                    status, total_score, score_band, consent_notice_version,
+                    status, total_score, score_band, has_oa, consent_notice_version,
                     consent_scope_json, created_at, retention_expires_at
                 )
                 VALUES (
                     :id, :participant_name, :employee_id, :created_by_provider_id,
-                    :status, :total_score, :score_band, :consent_notice_version,
+                    :status, :total_score, :score_band, :has_oa, :consent_notice_version,
                     :consent_scope_json, :created_at, :retention_expires_at
                 )
                 """,
@@ -254,6 +256,15 @@ class ManualRepository:
             )
             connection.commit()
         return self.get_assessment(record["id"])  # type: ignore[return-value]
+
+    def update_assessment_oa(self, assessment_id: str, has_oa: bool) -> bool:
+        with get_connection(self.db_path) as connection:
+            cursor = connection.execute(
+                "UPDATE manual_assessments SET has_oa = ? WHERE id = ?",
+                (1 if has_oa else 0, assessment_id),
+            )
+            connection.commit()
+        return cursor.rowcount > 0
 
     def assessment_exists(self, assessment_id: str) -> bool:
         with get_connection(self.db_path) as connection:
@@ -367,6 +378,9 @@ class ManualRepository:
         left_score: int | None,
         faults: dict[str, list[str]],
         provider_note: str | None,
+        hypermobile: bool = False,
+        right_pain: bool = False,
+        left_pain: bool = False,
     ) -> dict[str, Any]:
         scores = [score for score in (right_score, left_score) if score is not None]
         final_score = min(scores)
@@ -378,6 +392,9 @@ class ManualRepository:
             "right_score": right_score,
             "left_score": left_score,
             "final_score": final_score,
+            "hypermobile": 1 if hypermobile else 0,
+            "right_pain": 1 if right_pain else 0,
+            "left_pain": 1 if left_pain else 0,
             "faults_json": json.dumps(faults, sort_keys=True),
             "provider_note": provider_note,
             "reviewed_at": reviewed_at,
@@ -387,17 +404,22 @@ class ManualRepository:
                 """
                 INSERT INTO manual_movement_results (
                     id, assessment_id, movement_key, right_score, left_score,
-                    final_score, faults_json, provider_note, reviewed_at
+                    final_score, hypermobile, right_pain, left_pain,
+                    faults_json, provider_note, reviewed_at
                 )
                 VALUES (
                     :id, :assessment_id, :movement_key, :right_score, :left_score,
-                    :final_score, :faults_json, :provider_note, :reviewed_at
+                    :final_score, :hypermobile, :right_pain, :left_pain,
+                    :faults_json, :provider_note, :reviewed_at
                 )
                 ON CONFLICT(assessment_id, movement_key)
                 DO UPDATE SET
                     right_score = excluded.right_score,
                     left_score = excluded.left_score,
                     final_score = excluded.final_score,
+                    hypermobile = excluded.hypermobile,
+                    right_pain = excluded.right_pain,
+                    left_pain = excluded.left_pain,
                     faults_json = excluded.faults_json,
                     provider_note = excluded.provider_note,
                     reviewed_at = excluded.reviewed_at
@@ -452,11 +474,15 @@ class ManualRepository:
         consent_json = record.pop("consent_scope_json", None)
         record["consent_scope"] = json.loads(consent_json) if consent_json else None
         record["remaining_video_count"] = int(record.get("remaining_video_count") or 0)
+        record["has_oa"] = bool(record.get("has_oa") or 0)
         return record
 
     def _movement_result_from_row(self, row) -> dict[str, Any]:
         record = dict(row)
         record["faults"] = json.loads(record.pop("faults_json"))
+        record["hypermobile"] = bool(record.get("hypermobile") or 0)
+        record["right_pain"] = bool(record.get("right_pain") or 0)
+        record["left_pain"] = bool(record.get("left_pain") or 0)
         return record
 
     # ---- Review videos ----------------------------------------------------

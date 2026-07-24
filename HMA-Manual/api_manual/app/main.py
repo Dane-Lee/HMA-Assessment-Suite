@@ -41,6 +41,7 @@ class LoginPayload(BaseModel):
 class AssessmentCreatePayload(BaseModel):
     participant_name: str = Field(min_length=1, max_length=120)
     consent: ConsentPayload
+    has_oa: bool = False
 
     @field_validator("participant_name")
     @classmethod
@@ -81,6 +82,7 @@ class UploadSessionPayload(BaseModel):
 class SideManualScore(BaseModel):
     score: int = Field(ge=0, le=3)
     faults: list[str] = Field(default_factory=list)
+    pain: bool = False
 
     @field_validator("faults")
     @classmethod
@@ -100,6 +102,7 @@ class ManualScorePayload(BaseModel):
     right: SideManualScore | None = None
     left: SideManualScore | None = None
     provider_note: str | None = Field(default=None, max_length=2000)
+    hypermobile: bool = False
 
     @field_validator("provider_note")
     @classmethod
@@ -112,6 +115,10 @@ class ManualScorePayload(BaseModel):
 
 class CompleteAssessmentPayload(BaseModel):
     confirm_delete_videos: bool = False
+
+
+class AssessmentUpdatePayload(BaseModel):
+    has_oa: bool
 
 
 class TokenPayload(BaseModel):
@@ -232,6 +239,7 @@ def _register_api(app: FastAPI) -> None:
             consent_notice_version=payload.consent.notice_version,
             consent_scope=_consent_scope(payload.consent),
             retention_days=settings.assessment_retention_days,
+            has_oa=payload.has_oa,
         )
         repository.log_audit_event(
             "manual_assessment_create",
@@ -248,6 +256,20 @@ def _register_api(app: FastAPI) -> None:
         if assessment is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Assessment not found.")
         return _assessment_response(assessment)
+
+    @app.patch("/api/assessments/{assessment_id}")
+    def update_assessment(assessment_id: str, payload: AssessmentUpdatePayload, request: Request):
+        provider = _require_provider(request)
+        repository: ManualRepository = request.app.state.repository
+        if not repository.update_assessment_oa(assessment_id, payload.has_oa):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Assessment not found.")
+        repository.log_audit_event(
+            "manual_assessment_update",
+            provider_id=provider["id"],
+            assessment_id=assessment_id,
+            metadata={"has_oa": payload.has_oa},
+        )
+        return _assessment_response(repository.get_assessment(assessment_id))
 
     @app.delete("/api/assessments/{assessment_id}", status_code=status.HTTP_204_NO_CONTENT)
     def delete_assessment(assessment_id: str, request: Request):
@@ -303,6 +325,9 @@ def _register_api(app: FastAPI) -> None:
             left_score=left_score,
             faults=faults,
             provider_note=payload.provider_note,
+            hypermobile=payload.hypermobile,
+            right_pain=payload.right.pain if payload.right else False,
+            left_pain=payload.left.pain if payload.left else False,
         )
         repository.log_audit_event(
             "manual_score_save",

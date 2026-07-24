@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS manual_assessments (
     status TEXT NOT NULL DEFAULT 'draft',
     total_score INTEGER NOT NULL DEFAULT 0,
     score_band TEXT NOT NULL DEFAULT 'High opportunity for improvement',
+    has_oa INTEGER NOT NULL DEFAULT 0,
     consent_notice_version TEXT,
     consent_scope_json TEXT,
     created_at TEXT NOT NULL,
@@ -65,6 +66,9 @@ CREATE TABLE IF NOT EXISTS manual_movement_results (
     right_score INTEGER,
     left_score INTEGER,
     final_score INTEGER NOT NULL,
+    hypermobile INTEGER NOT NULL DEFAULT 0,
+    right_pain INTEGER NOT NULL DEFAULT 0,
+    left_pain INTEGER NOT NULL DEFAULT 0,
     faults_json TEXT NOT NULL DEFAULT '{}',
     provider_note TEXT,
     reviewed_at TEXT NOT NULL,
@@ -136,6 +140,20 @@ ON audit_events (assessment_id, created_at);
 """
 
 
+# Columns added after the initial schema shipped. Existing databases are patched
+# in place with ALTER TABLE (SQLite allows a constant DEFAULT on ADD COLUMN).
+_ADDED_COLUMNS: dict[str, dict[str, str]] = {
+    "manual_assessments": {
+        "has_oa": "INTEGER NOT NULL DEFAULT 0",
+    },
+    "manual_movement_results": {
+        "hypermobile": "INTEGER NOT NULL DEFAULT 0",
+        "right_pain": "INTEGER NOT NULL DEFAULT 0",
+        "left_pain": "INTEGER NOT NULL DEFAULT 0",
+    },
+}
+
+
 def get_connection(db_path: Path) -> sqlite3.Connection:
     connection = sqlite3.connect(db_path)
     connection.row_factory = sqlite3.Row
@@ -143,8 +161,17 @@ def get_connection(db_path: Path) -> sqlite3.Connection:
     return connection
 
 
+def _apply_column_migrations(connection: sqlite3.Connection) -> None:
+    for table, columns in _ADDED_COLUMNS.items():
+        existing = {row["name"] for row in connection.execute(f"PRAGMA table_info({table})")}
+        for column, ddl in columns.items():
+            if column not in existing:
+                connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} {ddl}")
+
+
 def initialize_database(db_path: Path) -> None:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     with get_connection(db_path) as connection:
         connection.executescript(SCHEMA_SQL)
+        _apply_column_migrations(connection)
         connection.commit()

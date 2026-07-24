@@ -10,6 +10,7 @@ import {
   issueUploadSession,
   listMovements,
   saveManualScore,
+  updateAssessmentOA,
   uploadReviewVideo
 } from "../lib/api";
 import { prettyFault } from "../lib/formatters";
@@ -25,10 +26,12 @@ import type {
 type SideDraft = {
   score: number | null;
   faults: string[];
+  pain: boolean;
 };
 
 type MovementDraft = Partial<Record<Side, SideDraft>> & {
   providerNote?: string;
+  hypermobile?: boolean;
 };
 
 type PendingVideo = {
@@ -103,7 +106,7 @@ export function AssessmentSessionPage() {
   function setSideDraft(movementKey: string, side: Side, patch: Partial<SideDraft>) {
     setDrafts((current) => {
       const movementDraft = current[movementKey] ?? {};
-      const sideDraft = movementDraft[side] ?? { score: null, faults: [] };
+      const sideDraft = movementDraft[side] ?? { score: null, faults: [], pain: false };
       return {
         ...current,
         [movementKey]: {
@@ -134,6 +137,26 @@ export function AssessmentSessionPage() {
         providerNote
       }
     }));
+  }
+
+  function setHypermobile(movementKey: string, hypermobile: boolean) {
+    setDrafts((current) => ({
+      ...current,
+      [movementKey]: {
+        ...(current[movementKey] ?? {}),
+        hypermobile
+      }
+    }));
+  }
+
+  async function handleToggleOA(hasOA: boolean) {
+    if (!assessment) return;
+    setError(null);
+    try {
+      setAssessment(await updateAssessmentOA(assessment.id, hasOA));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to update OA flag.");
+    }
   }
 
   async function handleVideoFile(movementKey: string, side: Side, event: ChangeEvent<HTMLInputElement>) {
@@ -184,7 +207,8 @@ export function AssessmentSessionPage() {
     if (!assessment || !selectedMovement) return;
     const draft = drafts[selectedMovement.key] ?? {};
     const payload: ManualScorePayload = {
-      provider_note: draft.providerNote?.trim() || undefined
+      provider_note: draft.providerNote?.trim() || undefined,
+      hypermobile: draft.hypermobile ?? false
     };
     for (const side of selectedMovement.sides) {
       const sideDraft = draft[side];
@@ -194,7 +218,8 @@ export function AssessmentSessionPage() {
       }
       payload[side] = {
         score: sideDraft.score,
-        faults: sideDraft.faults
+        faults: sideDraft.faults,
+        pain: sideDraft.pain ?? false
       };
     }
     setSaving(true);
@@ -279,6 +304,15 @@ export function AssessmentSessionPage() {
             <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Manual session</p>
             <h2 className="mt-1 text-2xl font-semibold">{assessment.participant_name}</h2>
             <p className="mt-2 text-sm text-ink/60">Manual scoring only</p>
+            <label className="mt-3 inline-flex items-center gap-2 rounded-xl bg-panel px-3 py-2 text-sm">
+              <input
+                checked={assessment.has_oa}
+                className="h-4 w-4 rounded border-slate-300 text-accent"
+                onChange={(event) => void handleToggleOA(event.target.checked)}
+                type="checkbox"
+              />
+              <span>Known osteoarthritis (OA)</span>
+            </label>
           </div>
           <div className="text-right">
             <div className="text-2xl font-semibold">{assessment.total_score}/15</div>
@@ -308,7 +342,7 @@ export function AssessmentSessionPage() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           {selectedMovement.sides.map((side) => {
-            const sideDraft = movementDraft[side] ?? { score: null, faults: [] };
+            const sideDraft = movementDraft[side] ?? { score: null, faults: [], pain: false };
             const video = videosBySlot[slotKey(selectedMovement.key, side)];
             const pending = pendingVideos[slotKey(selectedMovement.key, side)];
             const isBusy = busySlot === slotKey(selectedMovement.key, side);
@@ -340,6 +374,16 @@ export function AssessmentSessionPage() {
                     </button>
                   ))}
                 </div>
+
+                <label className="mt-3 flex items-center gap-2 rounded-xl border border-rose-300/60 bg-rose-500/10 px-3 py-2 text-sm font-medium text-rose-700">
+                  <input
+                    checked={sideDraft.pain}
+                    className="h-4 w-4 rounded border-rose-300 text-rose-600"
+                    onChange={(event) => setSideDraft(selectedMovement.key, side, { pain: event.target.checked })}
+                    type="checkbox"
+                  />
+                  <span>Pain or discomfort on this side</span>
+                </label>
 
                 <div className="mt-4 grid gap-2">
                   {faultPrompts.map((fault) => (
@@ -394,6 +438,16 @@ export function AssessmentSessionPage() {
             );
           })}
         </div>
+
+        <label className="flex items-center gap-2 rounded-xl border border-rim bg-panel-mid px-3 py-2 text-sm">
+          <input
+            checked={movementDraft.hypermobile ?? false}
+            className="h-4 w-4 rounded border-slate-300 text-accent"
+            onChange={(event) => setHypermobile(selectedMovement.key, event.target.checked)}
+            type="checkbox"
+          />
+          <span>Hypermobility in this movement (steers the plan toward stability work)</span>
+        </label>
 
         <textarea
           className="w-full resize-none rounded-2xl border border-rim bg-panel px-3 py-2 text-sm text-ink placeholder:text-ink/40 focus:border-accent focus:outline-none"
@@ -492,13 +546,16 @@ function seedDrafts(current: Record<string, MovementDraft>, assessment: ManualAs
       ...(next[result.movement_key] ?? {}),
       right: {
         score: result.right_score,
-        faults: result.faults.right ?? []
+        faults: result.faults.right ?? [],
+        pain: result.right_pain
       },
       left: {
         score: result.left_score,
-        faults: result.faults.left ?? []
+        faults: result.faults.left ?? [],
+        pain: result.left_pain
       },
-      providerNote: result.provider_note ?? ""
+      providerNote: result.provider_note ?? "",
+      hypermobile: result.hypermobile
     };
   }
   return next;

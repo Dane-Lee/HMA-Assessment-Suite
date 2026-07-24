@@ -8,6 +8,7 @@ export function NewAssessmentPage() {
   const navigate = useNavigate();
   const [participantName, setParticipantName] = useState("");
   const [accepted, setAccepted] = useState(false);
+  const [hasOA, setHasOA] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -16,7 +17,7 @@ export function NewAssessmentPage() {
     setSaving(true);
     setError(null);
     try {
-      const assessment = await createAssessment(participantName.trim(), buildConsentPayload());
+      const assessment = await createAssessment(participantName.trim(), buildConsentPayload(), hasOA);
       navigate(`/assessments/${assessment.id}`);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Unable to create assessment.");
@@ -56,6 +57,18 @@ export function NewAssessmentPage() {
           <span>
             I confirm participation is voluntary, temporary review-video retention has been explained, and results are
             not used as a stand-alone basis for employment decisions.
+          </span>
+        </label>
+        <label className="flex items-start gap-3 rounded-2xl bg-panel px-4 py-4 text-sm text-ink/75">
+          <input
+            checked={hasOA}
+            className="mt-1 h-4 w-4 rounded border-slate-300 text-accent"
+            onChange={(event) => setHasOA(event.target.checked)}
+            type="checkbox"
+          />
+          <span>
+            Known osteoarthritis (OA). Flags OA-cautionary exercises when a corrective plan is built. You can change this
+            later during scoring.
           </span>
         </label>
         {error ? <p className="text-sm text-rose-600">{error}</p> : null}

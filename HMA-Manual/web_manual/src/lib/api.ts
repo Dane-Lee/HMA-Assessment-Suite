@@ -62,11 +62,19 @@ export function listMovements() {
   return request<MovementDefinition[]>("/api/movements");
 }
 
-export function createAssessment(participantName: string, consent: ConsentPayload) {
+export function createAssessment(participantName: string, consent: ConsentPayload, hasOA = false) {
   return request<ManualAssessmentDetail>("/api/assessments", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ participant_name: participantName, consent })
+    body: JSON.stringify({ participant_name: participantName, consent, has_oa: hasOA })
+  });
+}
+
+export function updateAssessmentOA(assessmentId: string, hasOA: boolean) {
+  return request<ManualAssessmentDetail>(`/api/assessments/${assessmentId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ has_oa: hasOA })
   });
 }
 
