@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { InfoIcon } from "../components/InfoIcon";
 import { createAssessment } from "../lib/api";
 import { buildConsentPayload, PRIVACY_POSTURE_STATEMENT } from "../lib/privacy";
 
@@ -8,7 +9,6 @@ export function NewAssessmentPage() {
   const navigate = useNavigate();
   const [participantName, setParticipantName] = useState("");
   const [accepted, setAccepted] = useState(false);
-  const [hasOA, setHasOA] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -17,7 +17,7 @@ export function NewAssessmentPage() {
     setSaving(true);
     setError(null);
     try {
-      const assessment = await createAssessment(participantName.trim(), buildConsentPayload(), hasOA);
+      const assessment = await createAssessment(participantName.trim(), buildConsentPayload());
       navigate(`/assessments/${assessment.id}`);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Unable to create assessment.");
@@ -30,11 +30,13 @@ export function NewAssessmentPage() {
     <div className="grid gap-4">
       <section className="card">
         <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Assessment setup</p>
-        <h2 className="mt-2 text-2xl font-semibold">Start a new manual assessment</h2>
-        <p className="mt-3 text-sm text-ink/70">
-          Structured manual scores are retained under policy. Review videos are optional and temporary.
-        </p>
-        <p className="mt-3 rounded-2xl bg-panel px-4 py-3 text-sm text-ink/75">{PRIVACY_POSTURE_STATEMENT}</p>
+        <h2 className="mt-2 inline-flex items-center gap-2 text-2xl font-semibold">
+          Start a New Manual Assessment
+          <InfoIcon label="About this assessment">
+            <p>Structured manual scores are retained under policy. Review videos are optional and temporary.</p>
+            <p className="mt-2">{PRIVACY_POSTURE_STATEMENT}</p>
+          </InfoIcon>
+        </h2>
       </section>
       <form className="card grid gap-4" onSubmit={handleSubmit}>
         <label className="grid gap-2">
@@ -57,18 +59,6 @@ export function NewAssessmentPage() {
           <span>
             I confirm participation is voluntary, temporary review-video retention has been explained, and results are
             not used as a stand-alone basis for employment decisions.
-          </span>
-        </label>
-        <label className="flex items-start gap-3 rounded-2xl bg-panel px-4 py-4 text-sm text-ink/75">
-          <input
-            checked={hasOA}
-            className="mt-1 h-4 w-4 rounded border-slate-300 text-accent"
-            onChange={(event) => setHasOA(event.target.checked)}
-            type="checkbox"
-          />
-          <span>
-            Known osteoarthritis (OA). Flags OA-cautionary exercises when a corrective plan is built. You can change this
-            later during scoring.
           </span>
         </label>
         {error ? <p className="text-sm text-rose-600">{error}</p> : null}

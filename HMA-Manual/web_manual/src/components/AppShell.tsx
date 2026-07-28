@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { logout } from "../lib/api";
 import type { Provider } from "../lib/types";
+import { InfoIcon } from "./InfoIcon";
 
 type AppShellProps = {
   provider: Provider;
@@ -45,13 +46,15 @@ export function AppShell({ provider, onLogout }: AppShellProps) {
               <img src="/ati-logo/ATI-logo.png" alt="ATI Worksite Solutions" className="h-9 w-auto" />
             </div>
             <div className="text-right">
-              <h1 className="text-2xl font-semibold tracking-tight">HMA-Manual</h1>
+              <h1 className="inline-flex items-center gap-2 text-2xl font-semibold tracking-tight">
+                HMA-Manual
+                <InfoIcon align="right" label="About HMA-Manual">
+                  Manual five-movement HMA scoring with temporary review videos and provider-controlled results.
+                </InfoIcon>
+              </h1>
               <p className="mt-1 text-xs text-white/55">{provider.display_name}</p>
             </div>
           </div>
-          <p className="mt-3 max-w-xl text-sm text-white/65">
-            Manual five-movement HMA scoring with temporary review videos and provider-controlled results.
-          </p>
         </div>
         <nav aria-label="Primary" className="flex items-center gap-2 overflow-x-auto pb-1">
           <div className="flex gap-2">
@@ -78,7 +81,7 @@ export function AppShell({ provider, onLogout }: AppShellProps) {
             {isLight ? "Dark" : "Light"}
           </button>
           <button className="button-secondary shrink-0 py-2" onClick={() => void handleLogout()} type="button">
-            Sign out
+            Sign Out
           </button>
         </nav>
       </header>

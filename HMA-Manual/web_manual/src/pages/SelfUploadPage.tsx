@@ -14,7 +14,7 @@ function slotKey(movementKey: string, side: Side) {
 }
 
 function sideLabel(side: Side) {
-  return side === "left" ? "Left side" : "Right side";
+  return side === "left" ? "Left Side" : "Right Side";
 }
 
 function makeVideoId() {
@@ -149,7 +149,7 @@ export function SelfUploadPage() {
           <h1 className="mt-2 text-2xl font-semibold">Your videos were submitted</h1>
           <p className="mt-3 text-sm text-ink/70">Your provider can now complete manual scoring.</p>
           <button className="button-secondary mt-5" onClick={() => void handleSignOut()} type="button">
-            End session
+            End Session
           </button>
         </section>
       </div>
@@ -199,7 +199,7 @@ export function SelfUploadPage() {
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <label className="button-secondary min-h-14 px-5 py-4">
-                {activeUploaded || activeQueued ? "Replace video" : "Record video"}
+                {activeUploaded || activeQueued ? "Replace Video" : "Record Video"}
                 <input
                   accept="video/*"
                   capture="environment"
@@ -210,7 +210,7 @@ export function SelfUploadPage() {
               </label>
               {activeQueued ? (
                 <button className="button-primary min-h-14 px-5 py-4" disabled={uploadingId === activeQueued.id} onClick={() => void uploadQueued(activeQueued)} type="button">
-                  {uploadingId === activeQueued.id ? "Uploading..." : "Retry upload"}
+                  {uploadingId === activeQueued.id ? "Uploading..." : "Retry Upload"}
                 </button>
               ) : null}
             </div>
@@ -248,7 +248,7 @@ export function SelfUploadPage() {
           ))}
         </div>
         <button className="button-primary mt-5 w-full" disabled={!allUploaded} onClick={() => void handleSubmit()} type="button">
-          Submit videos
+          Submit Videos
         </button>
       </section>
     </div>

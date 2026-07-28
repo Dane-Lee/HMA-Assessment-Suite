@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { InfoIcon } from "../components/InfoIcon";
 import { deleteAssessment, listAssessments } from "../lib/api";
 import { bandTone, formatTimestamp } from "../lib/formatters";
 import type { ManualAssessmentSummary } from "../lib/types";
@@ -35,8 +36,10 @@ export function HistoryPage() {
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-ink/45">History</p>
-          <h2 className="mt-1 text-2xl font-semibold">Manual Assessments</h2>
-          <p className="mt-2 text-sm text-ink/65">Review completed and in-progress HMA-Manual sessions.</p>
+          <h2 className="mt-1 inline-flex items-center gap-2 text-2xl font-semibold">
+            Manual Assessments
+            <InfoIcon label="About history">Review completed and in-progress HMA-Manual sessions.</InfoIcon>
+          </h2>
         </div>
         <Link className="button-primary" to="/assessments/new">
           New

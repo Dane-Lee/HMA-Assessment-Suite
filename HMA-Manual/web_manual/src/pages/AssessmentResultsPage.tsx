@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import { InfoIcon } from "../components/InfoIcon";
 import { completeAssessment, deleteAllReviewVideos, getAssessment, listMovements } from "../lib/api";
 import { bandTone, formatTimestamp, prettyFault } from "../lib/formatters";
 import { copyTrackerExport, downloadTrackerExport } from "../lib/trackerExport";
@@ -82,40 +83,44 @@ export function AssessmentResultsPage() {
         </div>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link className="button-secondary border-white/30 bg-white/10 text-white hover:bg-white/20" to={`/assessments/${assessment.id}`}>
-            Continue editing
+            Continue Editing
           </Link>
           <Link className="button-secondary border-white/30 bg-white/10 text-white hover:bg-white/20" to="/history">
             History
           </Link>
           {assessment.remaining_video_count > 0 ? (
             <button className="button-secondary border-white/30 bg-white/10 text-white hover:bg-white/20" onClick={() => void handleDeleteVideos()} type="button">
-              Delete videos
+              Delete Videos
             </button>
           ) : null}
           <button className="button-secondary border-white/30 bg-white/10 text-white hover:bg-white/20" onClick={() => void handleComplete()} type="button">
-            {assessment.status === "completed" ? "Re-confirm complete" : "Complete"}
+            {assessment.status === "completed" ? "Re-confirm Complete" : "Complete"}
           </button>
         </div>
       </section>
 
       <section className="card">
-        <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Video lifecycle</p>
+        <div className="flex items-center gap-2">
+          <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Video Lifecycle</p>
+          <InfoIcon label="Video lifecycle">
+            Videos are deleted on provider confirmation or retention expiry. Structured manual scores remain.
+          </InfoIcon>
+        </div>
         <p className="mt-3 text-sm text-ink/70">
           Remaining temporary review videos: <strong>{assessment.remaining_video_count}</strong>
-        </p>
-        <p className="mt-2 text-sm text-ink/60">
-          Videos are deleted on provider confirmation or retention expiry. Structured manual scores remain.
         </p>
       </section>
 
       <section className="card">
         <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Corrective Exercise Tracker</p>
-        <h3 className="mt-1 text-lg font-semibold">Send scores to the Tracker</h3>
-        <p className="mt-2 text-sm text-ink/70">
-          Exports this assessment (scores, pain, hypermobility, and OA flags) in the Tracker's format. In the
-          Corrective Exercise Tracker, open <strong>Import → Paste JSON</strong> and paste, or import the downloaded
-          file. The Tracker turns it into a corrective exercise plan.
-        </p>
+        <h3 className="mt-1 inline-flex items-center gap-2 text-lg font-semibold">
+          Send Scores to the Tracker
+          <InfoIcon label="How to send to the Tracker">
+            Exports this assessment (scores, pain, hypermobility, and OA flags) in the Tracker's format. In the
+            Corrective Exercise Tracker, open Import → Paste JSON and paste, or import the downloaded file. The Tracker
+            turns it into a corrective exercise plan.
+          </InfoIcon>
+        </h3>
         <div className="mt-4 flex flex-wrap gap-2">
           <button className="button-primary" onClick={() => downloadTrackerExport(assessment)} type="button">
             Download for Tracker

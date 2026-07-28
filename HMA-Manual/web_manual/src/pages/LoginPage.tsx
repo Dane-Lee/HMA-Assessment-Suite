@@ -62,7 +62,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               />
             </label>
             <label className="grid gap-1 text-sm">
-              <span className="text-white/70">MFA code</span>
+              <span className="text-white/70">MFA Code</span>
               <input
                 autoComplete="one-time-code"
                 className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-white outline-none focus:border-white/40"
@@ -76,7 +76,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           </div>
           {error ? <p className="mt-4 text-sm text-rose-200">{error}</p> : null}
           <button className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white" disabled={submitting} type="submit">
-            {submitting ? "Signing in..." : "Sign in"}
+            {submitting ? "Signing In..." : "Sign In"}
           </button>
         </form>
       </main>

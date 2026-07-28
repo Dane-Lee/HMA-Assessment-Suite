@@ -1,10 +1,11 @@
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { InfoIcon } from "../components/InfoIcon";
+import { Modal } from "../components/Modal";
 import { ProgressChecklist } from "../components/ProgressChecklist";
 import {
   completeAssessment,
-  deleteAllReviewVideos,
   deleteReviewVideo,
   getAssessment,
   issueUploadSession,
@@ -40,7 +41,7 @@ type PendingVideo = {
 };
 
 function sideLabel(side: Side) {
-  return side === "left" ? "Left side" : "Right side";
+  return side === "left" ? "Left Side" : "Right Side";
 }
 
 function makeClientVideoId() {
@@ -67,6 +68,8 @@ export function AssessmentSessionPage() {
   const [error, setError] = useState<string | null>(null);
   const [linkForm, setLinkForm] = useState({ name: "", employer: "", email: "" });
   const [issuedLink, setIssuedLink] = useState<string | null>(null);
+  const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [expandedFaults, setExpandedFaults] = useState<Record<string, boolean>>({});
 
   async function refresh() {
     const [nextAssessment, nextMovements] = await Promise.all([getAssessment(assessmentId), listMovements()]);
@@ -276,12 +279,8 @@ export function AssessmentSessionPage() {
     navigate(`/assessments/${assessment.id}/results`);
   }
 
-  async function handleDeleteAllVideos() {
-    if (!assessment) return;
-    const confirmed = window.confirm(`Delete all remaining review videos for ${assessment.participant_name}?`);
-    if (!confirmed) return;
-    const response = await deleteAllReviewVideos(assessment.id);
-    setAssessment(response.assessment);
+  function toggleFaultsExpanded(key: string) {
+    setExpandedFaults((current) => ({ ...current, [key]: !current[key] }));
   }
 
   if (!assessment || !selectedMovement) {
@@ -303,7 +302,6 @@ export function AssessmentSessionPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Manual session</p>
             <h2 className="mt-1 text-2xl font-semibold">{assessment.participant_name}</h2>
-            <p className="mt-2 text-sm text-ink/60">Manual scoring only</p>
             <label className="mt-3 inline-flex items-center gap-2 rounded-xl bg-panel px-3 py-2 text-sm">
               <input
                 checked={assessment.has_oa}
@@ -311,7 +309,7 @@ export function AssessmentSessionPage() {
                 onChange={(event) => void handleToggleOA(event.target.checked)}
                 type="checkbox"
               />
-              <span>Known osteoarthritis (OA)</span>
+              <span>Known Osteoarthritis (OA)</span>
             </label>
           </div>
           <div className="text-right">
@@ -332,11 +330,13 @@ export function AssessmentSessionPage() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Current movement</p>
-            <h2 className="mt-1 text-2xl font-semibold">{selectedMovement.label}</h2>
-            <p className="mt-3 text-sm text-ink/70">{selectedMovement.instructions}</p>
+            <h2 className="mt-1 inline-flex items-center gap-2 text-2xl font-semibold">
+              {selectedMovement.label}
+              <InfoIcon label="Movement instructions">{selectedMovement.instructions}</InfoIcon>
+            </h2>
           </div>
           <button className="button-secondary" onClick={() => void refresh()} type="button">
-            Refresh videos
+            Refresh Videos
           </button>
         </div>
 
@@ -346,15 +346,17 @@ export function AssessmentSessionPage() {
             const video = videosBySlot[slotKey(selectedMovement.key, side)];
             const pending = pendingVideos[slotKey(selectedMovement.key, side)];
             const isBusy = busySlot === slotKey(selectedMovement.key, side);
+            const faultSlotKey = slotKey(selectedMovement.key, side);
+            const faultsOpen = expandedFaults[faultSlotKey] ?? false;
             return (
               <section className="rounded-2xl border border-rim bg-panel p-4" key={side}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-[0.25em] text-ink/40">{side}</p>
-                    <h3 className="font-semibold">{sideLabel(side)} score</h3>
+                    <h3 className="font-semibold">{sideLabel(side)} Score</h3>
                   </div>
                   <span className="rounded-full bg-panel-mid px-3 py-1 text-xs font-semibold text-ink/70">
-                    {sideDraft.score === null ? "Not set" : `${sideDraft.score}/3`}
+                    {sideDraft.score === null ? "Not Set" : `${sideDraft.score}/3`}
                   </span>
                 </div>
 
@@ -382,25 +384,38 @@ export function AssessmentSessionPage() {
                     onChange={(event) => setSideDraft(selectedMovement.key, side, { pain: event.target.checked })}
                     type="checkbox"
                   />
-                  <span>Pain or discomfort on this side</span>
+                  <span>Pain or Discomfort on This Side</span>
                 </label>
 
-                <div className="mt-4 grid gap-2">
-                  {faultPrompts.map((fault) => (
-                    <label className="flex items-center gap-2 rounded-xl bg-panel-mid px-3 py-2 text-sm" key={fault.key}>
-                      <input
-                        checked={sideDraft.faults.includes(fault.key)}
-                        className="h-4 w-4 rounded border-slate-300 text-accent"
-                        onChange={() => toggleFault(selectedMovement.key, side, fault.key)}
-                        type="checkbox"
-                      />
-                      <span>{fault.label}</span>
-                    </label>
-                  ))}
+                <div className="mt-4">
+                  <button
+                    aria-expanded={faultsOpen}
+                    className="flex w-full items-center justify-between rounded-xl bg-panel-mid px-3 py-2 text-sm font-semibold text-ink/80 transition hover:text-ink"
+                    onClick={() => toggleFaultsExpanded(faultSlotKey)}
+                    type="button"
+                  >
+                    <span>Fault Qualifiers{sideDraft.faults.length > 0 ? ` (${sideDraft.faults.length})` : ""}</span>
+                    <span aria-hidden className="text-xs text-ink/50">{faultsOpen ? "▲" : "▼"}</span>
+                  </button>
+                  {faultsOpen ? (
+                    <div className="mt-2 grid gap-2">
+                      {faultPrompts.map((fault) => (
+                        <label className="flex items-center gap-2 rounded-xl bg-panel-mid px-3 py-2 text-sm" key={fault.key}>
+                          <input
+                            checked={sideDraft.faults.includes(fault.key)}
+                            className="h-4 w-4 rounded border-slate-300 text-accent"
+                            onChange={() => toggleFault(selectedMovement.key, side, fault.key)}
+                            type="checkbox"
+                          />
+                          <span>{fault.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="mt-4 rounded-2xl border border-rim bg-panel p-3">
-                  <p className="text-sm font-semibold">Optional review video</p>
+                  <p className="text-sm font-semibold">Optional Review Video</p>
                   {pending ? (
                     <video className="mt-3 aspect-video w-full rounded-2xl bg-slate-900 object-cover" controls playsInline src={pending.previewUrl} />
                   ) : video?.video_url ? (
@@ -414,7 +429,7 @@ export function AssessmentSessionPage() {
                   )}
                   <div className="mt-3 flex flex-wrap gap-2">
                     <label className="button-secondary py-2">
-                      {video?.video_url || pending ? "Replace video" : "Add video"}
+                      {video?.video_url || pending ? "Replace Video" : "Add Video"}
                       <input
                         accept="video/*"
                         className="sr-only"
@@ -424,12 +439,12 @@ export function AssessmentSessionPage() {
                     </label>
                     {pending ? (
                       <button className="button-primary py-2" disabled={isBusy} onClick={() => void uploadPendingVideo(selectedMovement.key, side)} type="button">
-                        {isBusy ? "Uploading..." : "Save video"}
+                        {isBusy ? "Uploading..." : "Save Video"}
                       </button>
                     ) : null}
                     {video?.video_url ? (
                       <button className="button-secondary py-2" onClick={() => void handleDeleteVideo(video)} type="button">
-                        Delete video
+                        Delete Video
                       </button>
                     ) : null}
                   </div>
@@ -446,7 +461,10 @@ export function AssessmentSessionPage() {
             onChange={(event) => setHypermobile(selectedMovement.key, event.target.checked)}
             type="checkbox"
           />
-          <span>Hypermobility in this movement (steers the plan toward stability work)</span>
+          <span className="inline-flex items-center gap-1">
+            Hypermobility in This Movement
+            <InfoIcon label="Hypermobility">Steers the corrective plan toward stability work instead of mobility work.</InfoIcon>
+          </span>
         </label>
 
         <textarea
@@ -460,24 +478,38 @@ export function AssessmentSessionPage() {
 
         {error ? <p className="text-sm text-rose-600">{error}</p> : null}
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button className="button-primary" disabled={saving} onClick={() => void handleSaveMovement()} type="button">
-            {saving ? "Saving..." : "Save movement score"}
+            {saving ? "Saving..." : "Save Movement Score"}
           </button>
           <Link className="button-secondary" to={`/assessments/${assessment.id}/results`}>
-            Review results
+            Review Results
           </Link>
+          <button className="button-secondary ml-auto" onClick={() => setLinkModalOpen(true)} type="button">
+            Issue Mobile Video Request
+          </button>
         </div>
       </section>
 
       <section className="card">
-        <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Employee upload link</p>
-        <h2 className="mt-1 text-lg font-semibold">Issue mobile video request</h2>
-        <form className="mt-4 grid gap-3 sm:grid-cols-3" onSubmit={handleIssueLink}>
+        <button
+          className="button-primary w-full py-3 text-base font-semibold"
+          onClick={() => void handleComplete()}
+          type="button"
+        >
+          Complete Assessment
+        </button>
+      </section>
+
+      <Modal onClose={() => setLinkModalOpen(false)} open={linkModalOpen} title="Issue Mobile Video Request">
+        <p className="text-sm text-ink/70">
+          Generate a secure link the employee opens on their phone to record and upload the movement videos.
+        </p>
+        <form className="mt-4 grid gap-3" onSubmit={handleIssueLink}>
           <input
             className="rounded-2xl border border-rim bg-panel px-4 py-3 text-ink outline-none focus:border-accent"
             onChange={(event) => setLinkForm((current) => ({ ...current, name: event.target.value }))}
-            placeholder="Employee name"
+            placeholder="Employee Name"
             required
             value={linkForm.name}
           />
@@ -491,50 +523,28 @@ export function AssessmentSessionPage() {
           <input
             className="rounded-2xl border border-rim bg-panel px-4 py-3 text-ink outline-none focus:border-accent"
             onChange={(event) => setLinkForm((current) => ({ ...current, email: event.target.value }))}
-            placeholder="Email optional"
+            placeholder="Email (Optional)"
             type="email"
             value={linkForm.email}
           />
-          <button className="button-primary sm:col-span-3" type="submit">
-            Issue upload link
+          <button className="button-primary" type="submit">
+            Issue Upload Link
           </button>
         </form>
         {issuedLink ? (
           <div className="mt-4 rounded-2xl border border-accent/30 bg-accent/10 px-4 py-4">
-            <p className="text-xs uppercase tracking-[0.25em] text-ink/45">Secure link</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-ink/45">Secure Link</p>
             <code className="mt-2 block break-all rounded-xl bg-panel px-3 py-2 text-xs">{issuedLink}</code>
             <button
               className="button-secondary mt-3 py-2"
               onClick={() => navigator.clipboard.writeText(issuedLink)}
               type="button"
             >
-              Copy link
+              Copy Link
             </button>
           </div>
         ) : null}
-      </section>
-
-      <section className="card">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Completion</p>
-            <h2 className="mt-1 text-lg font-semibold">Finish manual scoring</h2>
-            <p className="mt-2 text-sm text-ink/65">
-              Scoring completion requires deletion confirmation when review videos remain.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {assessment.remaining_video_count > 0 ? (
-              <button className="button-secondary" onClick={() => void handleDeleteAllVideos()} type="button">
-                Delete all videos
-              </button>
-            ) : null}
-            <button className="button-primary" onClick={() => void handleComplete()} type="button">
-              Complete assessment
-            </button>
-          </div>
-        </div>
-      </section>
+      </Modal>
     </div>
   );
 }

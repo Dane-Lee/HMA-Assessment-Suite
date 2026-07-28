@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { InfoIcon } from "../components/InfoIcon";
 import { listAssessments } from "../lib/api";
 import { bandTone, formatTimestamp } from "../lib/formatters";
 import { PRIVACY_POSTURE_STATEMENT } from "../lib/privacy";
@@ -20,11 +21,13 @@ export function HomePage() {
     <div className="grid gap-4">
       <section className="card">
         <p className="text-xs uppercase tracking-[0.3em] text-ink/45">Start here</p>
-        <h2 className="mt-2 text-2xl font-semibold">Begin HMA-Manual</h2>
-        <p className="mt-3 max-w-2xl text-sm text-ink/70">
-          Score the same five HMA movements manually. Optional review videos are temporary and provider-controlled.
-        </p>
-        <p className="mt-3 rounded-2xl bg-panel px-4 py-3 text-sm text-ink/75">{PRIVACY_POSTURE_STATEMENT}</p>
+        <h2 className="mt-2 inline-flex items-center gap-2 text-2xl font-semibold">
+          Begin HMA-Manual
+          <InfoIcon label="About HMA-Manual">
+            <p>Score the same five HMA movements manually. Optional review videos are temporary and provider-controlled.</p>
+            <p className="mt-2">{PRIVACY_POSTURE_STATEMENT}</p>
+          </InfoIcon>
+        </h2>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link className="button-primary" to="/assessments/new">
             Start Manual Assessment
@@ -42,7 +45,7 @@ export function HomePage() {
             <h2 className="mt-1 text-lg font-semibold">Saved Manual Assessments</h2>
           </div>
           <Link className="text-sm font-semibold text-accent" to="/history">
-            View all
+            View All
           </Link>
         </div>
         <div className="mt-4 grid gap-3">
