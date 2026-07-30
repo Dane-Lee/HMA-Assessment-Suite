@@ -3,7 +3,10 @@
 Consolidated task list for both the AI app (`api/` + `web/`) and the Manual sister app (`HMA-Manual/`).
 Source of truth for the AI roadmap is [docs/self-guided-assessment/phase-plan.md](docs/self-guided-assessment/phase-plan.md).
 
-Last reviewed: 2026-06-24
+Last reviewed: 2026-07-30
+
+**Active branch for Manual-app work:** `hma-manual-ui-polish` (stacks `main` → `560a033` tracker-export
+→ `06ea160` UI polish → `92f1a37` camera). Resume point is the Manual App § "Next" list below.
 
 ---
 
@@ -51,10 +54,41 @@ Last reviewed: 2026-06-24
 
 ## Manual App (`HMA-Manual/`)
 
-Provider-scored, no AI. Manual scoring workflow already added. Remaining work is deployment/hardening
-(see [HMA-Manual/README.md](HMA-Manual/README.md)):
+Provider-scored, no AI. Full scoring workflow + Corrective Exercise Tracker feed + in-app camera
+(see [HMA-Manual/README.md](HMA-Manual/README.md)).
 
-- [ ] Run HMA + HMA-Manual behind a **reverse proxy** with separate hostnames + HTTPS termination.
+### ✅ Done
+- **Core manual workflow** — provider login (+ optional MFA), consent-gated assessments, per-side
+  0–3 scoring with fault checklists + notes, per-movement review videos (upload/replace/delete,
+  retention purge), employee mobile upload links, audit log, results + history. Final per movement =
+  **lower of the two sides**; total **/15**; bands **0–5 / 6–10 / 11–15** — matches the official HMA sheet.
+- **Fault vocab aligned to the official HMA reference sheet** — added shoulder
+  "overlapping hands (hypermobility)"; dropped the `*_placeholder` key names.
+- **Corrective Exercise Tracker feed** (`560a033`): captures **pain** (per side), **hypermobility**
+  (per movement), and **OA** (per assessment) — the inputs that drive the Tracker's exercise
+  selection — plus an **Export for Tracker** button (download/copy) that emits the Tracker's JSON
+  record shape. Load via the Tracker's **Import → Paste JSON**. Verified end-to-end
+  (Manual → Tracker → built exercise program). DB migrated in place (additive columns).
+- **UI polish** (`06ea160`): reusable hover-"i" tooltips (helper prose moved off-page), collapsible
+  fault qualifiers, upload-link moved into a modal, single centered "Complete Assessment" button,
+  removed the duplicate OA checkbox from New Assessment, Title Case on all labels.
+- **In-app webcam recorder** (`92f1a37`): Record button in the provider "Optional Review Video"
+  block — live viewfinder (`getUserMedia`) → record (`MediaRecorder`) → Use/Retake → becomes the
+  pending clip → **Save Video** uploads it. Requires HTTPS or localhost for camera access.
+- **Admin password** reset off the shipped default.
+
+### 🔲 Next (resume here)
+- [ ] **Push `hma-manual-ui-polish`** and decide the merge path to `main` (done in this session — verify on GitHub).
+- [ ] **Device-test the camera recorder** (provider laptop webcam + a phone) and the employee capture flow.
+- [ ] Apply the owner's **UX notes** collected while testing the Manual app.
+- [ ] (Optional) Add the same **live recorder to the employee upload page** (today it uses a native
+      `capture="environment"` file input).
+- [ ] **Tracker feed v2**: import only ADDS by `id` (no update-on-re-score); no shared employee
+      identity yet (company from employer if linked else blank; name split on first space).
+
+### 🔲 Deployment / hardening (before public use)
+- [ ] Run HMA + HMA-Manual behind a **reverse proxy** with separate hostnames + HTTPS termination
+      (also required for the in-app camera off localhost).
 - [ ] Enable **provider MFA**.
 - [ ] Move from single bootstrap password to **named provider accounts**.
 - [ ] Complete **compliance review** for employee movement video handling and retention.
