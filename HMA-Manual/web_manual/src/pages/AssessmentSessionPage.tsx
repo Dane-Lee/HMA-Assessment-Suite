@@ -1,6 +1,7 @@
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { CameraRecorderModal } from "../components/CameraRecorderModal";
 import { InfoIcon } from "../components/InfoIcon";
 import { Modal } from "../components/Modal";
 import { ProgressChecklist } from "../components/ProgressChecklist";
@@ -70,6 +71,7 @@ export function AssessmentSessionPage() {
   const [issuedLink, setIssuedLink] = useState<string | null>(null);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [expandedFaults, setExpandedFaults] = useState<Record<string, boolean>>({});
+  const [recordingSlot, setRecordingSlot] = useState<{ movementKey: string; side: Side } | null>(null);
 
   async function refresh() {
     const [nextAssessment, nextMovements] = await Promise.all([getAssessment(assessmentId), listMovements()]);
@@ -283,6 +285,17 @@ export function AssessmentSessionPage() {
     setExpandedFaults((current) => ({ ...current, [key]: !current[key] }));
   }
 
+  function handleRecordedVideo(file: File) {
+    if (!recordingSlot) return;
+    const key = slotKey(recordingSlot.movementKey, recordingSlot.side);
+    const previous = pendingVideos[key];
+    if (previous) URL.revokeObjectURL(previous.previewUrl);
+    setPendingVideos((current) => ({
+      ...current,
+      [key]: { file, previewUrl: URL.createObjectURL(file) }
+    }));
+  }
+
   if (!assessment || !selectedMovement) {
     return (
       <section className="card">
@@ -428,8 +441,15 @@ export function AssessmentSessionPage() {
                     </div>
                   )}
                   <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      className="button-secondary py-2"
+                      onClick={() => setRecordingSlot({ movementKey: selectedMovement.key, side })}
+                      type="button"
+                    >
+                      Record
+                    </button>
                     <label className="button-secondary py-2">
-                      {video?.video_url || pending ? "Replace Video" : "Add Video"}
+                      {video?.video_url || pending ? "Replace Video" : "Upload Video"}
                       <input
                         accept="video/*"
                         className="sr-only"
@@ -545,6 +565,13 @@ export function AssessmentSessionPage() {
           </div>
         ) : null}
       </Modal>
+
+      <CameraRecorderModal
+        onCapture={handleRecordedVideo}
+        onClose={() => setRecordingSlot(null)}
+        open={recordingSlot !== null}
+        title={`Record ${selectedMovement.label}${recordingSlot ? ` — ${sideLabel(recordingSlot.side)}` : ""}`}
+      />
     </div>
   );
 }
