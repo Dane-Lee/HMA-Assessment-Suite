@@ -6,7 +6,17 @@ Source of truth for the AI roadmap is [docs/self-guided-assessment/phase-plan.md
 Last reviewed: 2026-07-31
 
 **Branch state:** `hma-manual-ui-polish` (Manual app) and `rotation-accuracy` (AI scoring) are merged
-into `main`. Current integration work is on `hma-manual-tracker-feed-v2`.
+into `main`. Current work is on **`hma-manual-tracker-feed-v2`**, which carries two independent
+strands and is **not yet merged to `main`**:
+- `45ba3a5` — Manual app: optional employee details feeding the Tracker export.
+- `c59c52f` — AI app: scoring/upload/session hardening (F7a/F7b, F14a, F16, 11a).
+
+**Second repo:** the Corrective Exercise Tracker is a *separate* repo, cloned to
+`ATI/HMA-Correct-Exercise-Tracker`, branch **`tracker-merge-on-reimport`** (`a2f3fcf`). It holds the
+other half of Tracker feed v2 and must be merged there, not here.
+
+**Green as of 2026-07-31:** 82 `api/tests`, 5 `api_manual/tests`, 11 `web_manual` vitest,
+Tracker `npm test`. TypeScript clean.
 
 ---
 
@@ -119,12 +129,14 @@ Provider-scored, no AI. Full scoring workflow + Corrective Exercise Tracker feed
     as additive columns, carried into the export. Name fallback now splits on the LAST space and
     understands "Last, First".
   - Tracker side (separate repo `Dane-Lee/HMA-Correct-Exercise-Tracker`, branch
-    `tracker-merge-on-reimport`, **not pushed**): re-importing an id you already hold now **updates**
+    `tracker-merge-on-reimport`, pushed): re-importing an id you already hold now **updates**
     it instead of skipping. Scores/pain/hypermobility/OA/details refresh; **exercise plan,
     observations, quality focus, follow-up and re-test dates are preserved**. Notes refresh only
     while they are unedited since the last import. `npm test` covers the rules.
-- [ ] **Verify Tracker feed v2 end-to-end** — score, export, import, build a plan, re-score, re-export,
-      confirm the plan survives and the scores change. Then push the Tracker branch.
+- [ ] **Verify Tracker feed v2 end-to-end (NEXT — nothing has been clicked through yet).** Score an
+      assessment → Export for Tracker → import into the Tracker → build an exercise program →
+      go back and change a score in the Manual app → export and import again. Confirm the scores
+      update *and* the exercise program survives. Only merge either branch after this passes.
 
 ### 🔲 Deployment / hardening (before public use)
 - [ ] Run HMA + HMA-Manual behind a **reverse proxy** with separate hostnames + HTTPS termination

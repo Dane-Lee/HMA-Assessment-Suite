@@ -31,9 +31,19 @@ The Manual app is the front door of the HMA suite (**Manual → Corrective Exerc
 On an assessment's **Results** page, **Send Scores to the Tracker** produces the Tracker's own JSON
 record (scores, pain, hypermobility, OA). Use **Download for Tracker** or **Copy JSON**, then in the
 HMA Corrective Exercise Tracker open **Import → Paste JSON**. The Tracker turns it into a corrective
-exercise plan. The Manual assessment's id is reused as the record id, so re-importing the same
-assessment is de-duplicated (note: the Tracker currently *adds* new records but does not update an
-already-imported one).
+exercise plan.
+
+**Employee details.** New Assessment requires only a participant name or ID, so anonymous scoring stays
+a single field. A collapsed **Employee Details (Optional)** section adds first/last name, company,
+department, shift, and location; anything filled in is carried into the export so it does not have to be
+re-keyed in the Tracker. When first/last name are left blank the participant name is split as a
+fallback — on the **last** space ("Mary Jo Smith" → Mary Jo / Smith), and "Last, First" is understood.
+
+**Re-scoring.** The Manual assessment's id is reused as the Tracker record id. Fix a score and export
+again, and the Tracker **updates** the record it already holds: scores, pain, hypermobility, OA and
+employee details refresh, while the exercise plan, observations, quality focus, and follow-up/re-test
+dates built inside the Tracker are preserved. Notes refresh only while they are unedited in the Tracker.
+(This requires the Tracker at `tracker-merge-on-reimport` or later; older builds skip the re-import.)
 
 ## Camera Recording
 
