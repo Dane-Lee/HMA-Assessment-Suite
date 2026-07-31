@@ -10,7 +10,9 @@ const WARNING_COPY: Record<string, string> = {
   low_pose_detection_rate: "Pose detection was inconsistent across the clip.",
   low_required_landmark_visibility: "One or more key joints were hard to see.",
   missing_video_dimensions: "Video dimensions were unavailable.",
-  pose_overlay_unavailable_for_fallback_scoring: "Pose overlay is unavailable for fallback scoring.",
+  pose_overlay_unavailable_for_fallback_scoring: "Automated pose scoring was unavailable.",
+  pose_extraction_failed: "The pose analyzer could not process this clip.",
+  pose_dependencies_unavailable: "The pose-analysis service is unavailable.",
   pose_overlays_disabled: "Pose overlays are disabled for this environment."
 };
 

@@ -19,6 +19,13 @@ import type {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
+export class CaptureApiError extends Error {
+  constructor(message: string, readonly code?: string) {
+    super(message);
+    this.name = "CaptureApiError";
+  }
+}
+
 export type AuthStatus = {
   auth_required: boolean;
   authenticated: boolean;
@@ -203,7 +210,16 @@ export async function uploadCapture(
       { method: "POST", body, signal: controller.signal, credentials: "include" }
     );
     if (!response.ok) {
-      throw new Error(await response.text());
+      const body = await response.json().catch(() => ({})) as {
+        detail?: string | { code?: string; message?: string };
+      };
+      if (typeof body.detail === "object") {
+        throw new CaptureApiError(
+          body.detail.message ?? "Unable to analyze capture.",
+          body.detail.code
+        );
+      }
+      throw new CaptureApiError(body.detail ?? `Request failed with status ${response.status}`);
     }
     return (await response.json()) as CaptureResult;
   } catch (err) {

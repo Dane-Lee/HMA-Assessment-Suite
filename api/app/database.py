@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS draft_captures (
     movement_key TEXT NOT NULL,
     side TEXT NOT NULL,
     client_capture_id TEXT NOT NULL,
-    score INTEGER NOT NULL,
+    score INTEGER,
     detected_faults_json TEXT NOT NULL,
     metrics_json TEXT NOT NULL,
     pose_trace_json TEXT,
@@ -206,6 +206,7 @@ def initialize_database(db_path: Path) -> None:
         connection.executescript(SCHEMA_SQL)
         connection.commit()
     _run_column_migrations(db_path)
+    _migrate_nullable_draft_capture_score(db_path)
 
 
 def _run_column_migrations(db_path: Path) -> None:
@@ -237,3 +238,53 @@ def _run_column_migrations(db_path: Path) -> None:
             except sqlite3.OperationalError as exc:
                 if "duplicate column name" not in str(exc).lower():
                     raise
+
+
+def _migrate_nullable_draft_capture_score(db_path: Path) -> None:
+    """Allow an uploaded review clip to exist when automated scoring is unavailable."""
+    with get_connection(db_path) as connection:
+        columns = connection.execute("PRAGMA table_info(draft_captures)").fetchall()
+        score_column = next((column for column in columns if column["name"] == "score"), None)
+        if score_column is None or not score_column["notnull"]:
+            return
+
+        connection.execute("PRAGMA foreign_keys = OFF")
+        try:
+            connection.executescript(
+                """
+                BEGIN;
+                ALTER TABLE draft_captures RENAME TO draft_captures_legacy;
+                CREATE TABLE draft_captures (
+                    id TEXT PRIMARY KEY,
+                    assessment_id TEXT NOT NULL,
+                    movement_key TEXT NOT NULL,
+                    side TEXT NOT NULL,
+                    client_capture_id TEXT NOT NULL,
+                    score INTEGER,
+                    detected_faults_json TEXT NOT NULL,
+                    metrics_json TEXT NOT NULL,
+                    pose_trace_json TEXT,
+                    quality_json TEXT,
+                    confidence REAL NOT NULL,
+                    source TEXT NOT NULL,
+                    original_filename TEXT,
+                    content_type TEXT,
+                    file_size_bytes INTEGER NOT NULL,
+                    video_path TEXT,
+                    created_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL,
+                    video_deleted_at TEXT,
+                    FOREIGN KEY (assessment_id) REFERENCES assessments(id) ON DELETE CASCADE,
+                    UNIQUE (assessment_id, movement_key, side),
+                    UNIQUE (assessment_id, client_capture_id)
+                );
+                INSERT INTO draft_captures SELECT * FROM draft_captures_legacy;
+                DROP TABLE draft_captures_legacy;
+                COMMIT;
+                """
+            )
+        except Exception:
+            connection.rollback()
+            raise
+        finally:
+            connection.execute("PRAGMA foreign_keys = ON")

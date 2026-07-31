@@ -84,7 +84,7 @@ class AssessmentCreateRequest(BaseModel):
 class CaptureResponse(BaseModel):
     movement_key: str
     side: Side
-    score: int
+    score: int | None
     detected_faults: list[str]
     confidence: float
     metrics: dict[str, float] = Field(default_factory=dict)

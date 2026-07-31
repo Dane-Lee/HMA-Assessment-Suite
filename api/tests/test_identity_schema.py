@@ -145,3 +145,76 @@ def test_initialize_is_idempotent(tmp_path: Path):
 
     tables = _table_names(db_path)
     assert {"employees", "magic_link_tokens", "sessions"} <= tables
+
+
+def test_initialize_migrates_draft_score_to_nullable_without_data_loss(tmp_path: Path):
+    db_path = tmp_path / "legacy.db"
+    with get_connection(db_path) as connection:
+        connection.executescript(
+            """
+            CREATE TABLE assessments (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                scoring_mode TEXT NOT NULL DEFAULT 'ai_assisted',
+                total_score INTEGER NOT NULL DEFAULT 0,
+                score_band TEXT NOT NULL DEFAULT 'High opportunity for improvement',
+                consent_notice_version TEXT,
+                consent_accepted_at TEXT,
+                consent_scope_json TEXT,
+                privacy_posture TEXT NOT NULL DEFAULT 'voluntary_ergonomic_wellness',
+                retention_expires_at TEXT
+            );
+            CREATE TABLE draft_captures (
+                id TEXT PRIMARY KEY,
+                assessment_id TEXT NOT NULL,
+                movement_key TEXT NOT NULL,
+                side TEXT NOT NULL,
+                client_capture_id TEXT NOT NULL,
+                score INTEGER NOT NULL,
+                detected_faults_json TEXT NOT NULL,
+                metrics_json TEXT NOT NULL,
+                pose_trace_json TEXT,
+                quality_json TEXT,
+                confidence REAL NOT NULL,
+                source TEXT NOT NULL,
+                original_filename TEXT,
+                content_type TEXT,
+                file_size_bytes INTEGER NOT NULL,
+                video_path TEXT,
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                video_deleted_at TEXT,
+                FOREIGN KEY (assessment_id) REFERENCES assessments(id) ON DELETE CASCADE,
+                UNIQUE (assessment_id, movement_key, side),
+                UNIQUE (assessment_id, client_capture_id)
+            );
+            INSERT INTO assessments (id, name, created_at) VALUES ('a1', 'Legacy', '2026-01-01');
+            INSERT INTO draft_captures (
+                id, assessment_id, movement_key, side, client_capture_id, score,
+                detected_faults_json, metrics_json, confidence, source,
+                file_size_bytes, created_at, expires_at
+            ) VALUES (
+                'd1', 'a1', 'trunk_rotation', 'left', 'c1', 2,
+                '[]', '{}', 0.5, 'fallback', 10, '2026-01-01', '2026-01-08'
+            );
+            """
+        )
+
+    initialize_database(db_path)
+
+    with get_connection(db_path) as connection:
+        score_column = next(
+            row for row in connection.execute("PRAGMA table_info(draft_captures)")
+            if row["name"] == "score"
+        )
+        preserved = connection.execute(
+            "SELECT id, score FROM draft_captures WHERE id = 'd1'"
+        ).fetchone()
+        connection.execute(
+            "UPDATE draft_captures SET score = NULL WHERE id = 'd1'"
+        )
+        connection.commit()
+
+    assert score_column["notnull"] == 0
+    assert dict(preserved) == {"id": "d1", "score": 2}

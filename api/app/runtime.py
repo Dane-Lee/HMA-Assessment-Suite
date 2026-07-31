@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .repository import AssessmentRepository
+from .rate_limit import SlidingWindowRateLimiter
 from .services.catalog import MovementCatalog
 from .services.scoring.service import ScoringService
 from .settings import AppSettings
@@ -14,4 +15,4 @@ class RuntimeState:
     repository: AssessmentRepository
     catalog: MovementCatalog
     scoring_service: ScoringService
-
+    session_write_limiter: SlidingWindowRateLimiter

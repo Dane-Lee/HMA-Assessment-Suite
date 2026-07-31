@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import logging
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -26,6 +27,7 @@ except ImportError:  # pragma: no cover - optional dependency path
 
 
 EPSILON = 1e-6
+logger = logging.getLogger(__name__)
 
 
 def _clamp(value: float, minimum: float, maximum: float) -> float:
@@ -122,8 +124,25 @@ class HybridFeatureExtractor:
             try:
                 return self._extract_with_mediapipe(context)
             except Exception:
-                pass
-        return self._fallback_extract(context)
+                logger.exception(
+                    "POSE_EXTRACTION_FAILED | movement=%s side=%s file_size_bytes=%s "
+                    "duration_seconds=%s frame_count=%s",
+                    movement_key,
+                    side,
+                    context.file_size_bytes,
+                    context.duration_seconds,
+                    context.frame_count,
+                )
+                return self._fallback_extract(context, reason="pose_extraction_failed")
+        logger.warning(
+            "POSE_DEPENDENCIES_UNAVAILABLE | movement=%s side=%s cv2=%s mediapipe=%s numpy=%s",
+            movement_key,
+            side,
+            cv2 is not None,
+            mp is not None,
+            np is not None,
+        )
+        return self._fallback_extract(context, reason="pose_dependencies_unavailable")
 
     def _build_context(self, video_path: Path, movement_key: str, side: str) -> VideoContext:
         stat = video_path.stat()
@@ -574,7 +593,7 @@ class HybridFeatureExtractor:
         }
         return features
 
-    def _fallback_extract(self, context: VideoContext) -> ExtractionResult:
+    def _fallback_extract(self, context: VideoContext, *, reason: str) -> ExtractionResult:
         digest = hashlib.sha256()
         digest.update(context.path.name.encode("utf-8"))
         with context.path.open("rb") as handle:
@@ -668,7 +687,10 @@ class HybridFeatureExtractor:
                 sampled_frames=0,
                 detection_rate=0.0,
                 required_landmark_visibility={},
-                warnings=["pose_overlay_unavailable_for_fallback_scoring"],
+                warnings=[
+                    "pose_overlay_unavailable_for_fallback_scoring",
+                    reason,
+                ],
                 width=context.width,
                 height=context.height,
                 fps=round(context.fps, 3),

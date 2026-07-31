@@ -5,8 +5,8 @@ Source of truth for the AI roadmap is [docs/self-guided-assessment/phase-plan.md
 
 Last reviewed: 2026-07-31
 
-**Branch state:** `hma-manual-ui-polish` (Manual app) and `rotation-accuracy` (AI scoring) are both
-merged into `main` — work off `main` unless a task says otherwise.
+**Branch state:** `hma-manual-ui-polish` (Manual app) and `rotation-accuracy` (AI scoring) are merged
+into `main`. Current integration work is on `hma-manual-tracker-feed-v2`.
 
 ---
 
@@ -15,7 +15,16 @@ merged into `main` — work off `main` unless a task says otherwise.
 ### ✅ Done
 - **Phase 1 — Identity, magic links, role separation.** Employee/magic-link/session tables,
   `auth_tokens`, provider + self-session routes, role-aware middleware, and the self-flow frontend.
-- **Phase 2 (capture mechanics)** — recorder, quality gate, mobile capture, provider pose overlays.
+- **Phase 2 (capture mechanics, partial)** — recorder, quality telemetry, mobile capture, and
+  provider pose overlays. The score-acceptance quality gate remains open below.
+- **Commercial hardening — 2026-07-31:**
+  - [x] **F7a/F7b:** structured pose-failure diagnostics; production now fails closed to
+        unscoreable/provider-review state. Deterministic fallback requires explicit test/dev opt-in.
+  - [x] **F14a:** request-body and exact file-byte upload limits are enforced while streaming;
+        partial/invalid uploads are cleaned up.
+  - [x] **F16:** per-client throttling on provider PIN and employee magic-link session creation.
+  - [x] **11a:** automated failure-path harness for unavailable pose services, valid/corrupt media,
+        oversized/empty/unsupported uploads, migration safety, throttling, and UI review handling.
 
 ### 🔲 Phase 0 — Groundwork (blocking; long lead time)
 - [ ] Shoot the **demo videos** (5 looping clips, both sides) and drop into `web/public/`.
@@ -24,8 +33,8 @@ merged into `main` — work off `main` unless a task says otherwise.
       `camera_setup_self`, `common_mistakes`, `recording_seconds_min/max`).
 - [ ] **Legal / consent review**; add the `employer_distribution_acknowledged` consent flag.
 - [ ] Confirm **HIPAA scope** for self-administered + employer-distributed flow.
-- [ ] Confirm **MediaPipe is the production scoring path**, not the deterministic fallback
-      (`README.md`). The quality gate is meaningless without it.
+- [ ] Verify **MediaPipe + OpenCV in the production runtime**. Production fallback scoring is now
+      disabled by default; an unavailable pose service produces an unscoreable/provider-review clip.
 - [ ] **Rotation-accuracy validation** — Tier-1 synthetic analysis DONE
       ([docs/self-guided-assessment/rotation-accuracy-findings.md](docs/self-guided-assessment/rotation-accuracy-findings.md)):
       trunk gate rides on uncalibrated z-scale + a `max()` inflation bug; cervical metric is blind to
@@ -40,6 +49,16 @@ merged into `main` — work off `main` unless a task says otherwise.
 - [ ] Personal **mobile camera-prop reality test** for all 5 movements to calibrate coaching copy.
 
 ### 🔲 Phase 2 — Remaining
+- [ ] **Finding 8 — score-acceptance quality gate (NEXT):** define and enforce the minimum usable
+      detection rate, required-landmark visibility, duration/framing, and retake-versus-review rules.
+- [ ] **Finding 10 — server-authoritative provenance:** finalize from server-owned capture records;
+      do not accept client-authored app scores, metrics, source, or quality as authoritative evidence.
+- [ ] **Findings 1/5 — employee ownership + link semantics:** bind assessments to employees and
+      make issued links resolve only the intended employee/assessment lifecycle.
+- [ ] **Finding 12 — scoped mobile authorization:** replace provider-wide mobile privileges with
+      assessment-scoped participant credentials.
+- [ ] **Findings 2/15 — lifecycle + incomplete semantics:** represent draft/submitted/returned/
+      reviewed states and incomplete or unscoreable movements without misleading totals.
 - [ ] Wire demo videos + content schema into the per-movement screens.
 - [ ] Replace **scoring placeholders** with real logic — `excessive_effort_placeholder`,
       `finger_walking_placeholder` in `api/app/services/scoring/movements/`.

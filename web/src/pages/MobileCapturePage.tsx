@@ -366,7 +366,9 @@ export function MobileCapturePage() {
   const activePending = activeSlot ? pendingFiles[activeSlot.key] : undefined;
   const activeUploading = activeQueued ? uploadingIds.has(activeQueued.id) : false;
   const activeStatus = activeDraft
-    ? `Uploaded: score ${activeDraft.score}/3`
+    ? activeDraft.score === null
+      ? "Uploaded: provider review required"
+      : `Uploaded: score ${activeDraft.score}/3`
     : activeUploading
       ? "Uploading"
       : activeQueued
@@ -525,7 +527,9 @@ export function MobileCapturePage() {
 
             {activeDraft ? (
               <p className="mt-3 text-sm text-ink/70">
-                Analyzed with {activeDraft.source}; confidence {Math.round(activeDraft.confidence * 100)}%.
+                {activeDraft.score === null
+                  ? "Automated analysis was unavailable. The clip was saved for provider review."
+                  : `Analyzed with ${activeDraft.source}; confidence ${Math.round(activeDraft.confidence * 100)}%.`}
               </p>
             ) : null}
             {slotErrors[activeSlot.key] ? (
