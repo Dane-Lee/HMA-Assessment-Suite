@@ -156,6 +156,43 @@ def test_oa_pain_and_hypermobility_flags_round_trip() -> None:
     assert client.get(f"/api/assessments/{assessment_id}").json()["has_oa"] is False
 
 
+def test_optional_employee_details_round_trip_and_default_blank() -> None:
+    tmp_path = make_test_dir("employee-details")
+    app = create_app(make_settings(tmp_path))
+    client = TestClient(app)
+    login(client)
+
+    details = {
+        "first_name": "Casey",
+        "last_name": "Jones",
+        "company": "Navarre",
+        "department": "Weld",
+        "shift": "2nd",
+        "work_location": "Line 3",
+    }
+    created = client.post(
+        "/api/assessments",
+        json={"participant_name": "EMP-4471", "consent": consent(), **details},
+    )
+    assert created.status_code == 201
+    assessment_id = created.json()["id"]
+    for field, value in details.items():
+        assert created.json()[field] == value
+
+    reloaded = client.get(f"/api/assessments/{assessment_id}").json()
+    for field, value in details.items():
+        assert reloaded[field] == value
+
+    # Every detail is optional: omitting them yields blanks, not nulls or errors.
+    bare = client.post(
+        "/api/assessments",
+        json={"participant_name": "Jordan", "consent": consent()},
+    )
+    assert bare.status_code == 201
+    for field in details:
+        assert bare.json()[field] == ""
+
+
 def test_employee_upload_session_is_scoped_to_assessment() -> None:
     tmp_path = make_test_dir("employee-upload")
     app = create_app(make_settings(tmp_path))

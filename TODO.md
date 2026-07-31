@@ -94,8 +94,18 @@ Provider-scored, no AI. Full scoring workflow + Corrective Exercise Tracker feed
 - [ ] Apply the owner's **UX notes** collected while testing the Manual app.
 - [ ] (Optional) Add the same **live recorder to the employee upload page** (today it uses a native
       `capture="environment"` file input).
-- [ ] **Tracker feed v2**: import only ADDS by `id` (no update-on-re-score); no shared employee
-      identity yet (company from employer if linked else blank; name split on first space).
+- [x] **Tracker feed v2** (2026-07-31) — both halves done:
+  - Manual side: optional **Employee Details** section on New Assessment (first/last name, company,
+    department, shift, location), collapsed by default so anonymous scoring stays one field. Stored
+    as additive columns, carried into the export. Name fallback now splits on the LAST space and
+    understands "Last, First".
+  - Tracker side (separate repo `Dane-Lee/HMA-Correct-Exercise-Tracker`, branch
+    `tracker-merge-on-reimport`, **not pushed**): re-importing an id you already hold now **updates**
+    it instead of skipping. Scores/pain/hypermobility/OA/details refresh; **exercise plan,
+    observations, quality focus, follow-up and re-test dates are preserved**. Notes refresh only
+    while they are unedited since the last import. `npm test` covers the rules.
+- [ ] **Verify Tracker feed v2 end-to-end** — score, export, import, build a plan, re-score, re-export,
+      confirm the plan survives and the scores change. Then push the Tracker branch.
 
 ### 🔲 Deployment / hardening (before public use)
 - [ ] Run HMA + HMA-Manual behind a **reverse proxy** with separate hostnames + HTTPS termination
