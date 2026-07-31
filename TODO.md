@@ -3,10 +3,10 @@
 Consolidated task list for both the AI app (`api/` + `web/`) and the Manual sister app (`HMA-Manual/`).
 Source of truth for the AI roadmap is [docs/self-guided-assessment/phase-plan.md](docs/self-guided-assessment/phase-plan.md).
 
-Last reviewed: 2026-07-30
+Last reviewed: 2026-07-31
 
-**Active branch for Manual-app work:** `hma-manual-ui-polish` (stacks `main` → `560a033` tracker-export
-→ `06ea160` UI polish → `92f1a37` camera). Resume point is the Manual App § "Next" list below.
+**Branch state:** `hma-manual-ui-polish` (Manual app) and `rotation-accuracy` (AI scoring) are both
+merged into `main` — work off `main` unless a task says otherwise.
 
 ---
 
@@ -26,6 +26,17 @@ Last reviewed: 2026-07-30
 - [ ] Confirm **HIPAA scope** for self-administered + employer-distributed flow.
 - [ ] Confirm **MediaPipe is the production scoring path**, not the deterministic fallback
       (`README.md`). The quality gate is meaningless without it.
+- [ ] **Rotation-accuracy validation** — Tier-1 synthetic analysis DONE
+      ([docs/self-guided-assessment/rotation-accuracy-findings.md](docs/self-guided-assessment/rotation-accuracy-findings.md)):
+      trunk gate rides on uncalibrated z-scale + a `max()` inflation bug; cervical metric is blind to
+      slide/side-bend confounds.
+  - [x] (a) Robust-peak estimator fix — `_robust_max`/`_min`/`_span` replace raw `max()`/`min()`/span.
+  - [x] (b) Ear-visibility cervical yaw prototype — proven to reject the slide/side-bend confounds
+        ([models/cervical_ear_yaw_model.py](docs/self-guided-assessment/models/cervical_ear_yaw_model.py));
+        logged as non-gating debug metric `ear_visibility_asymmetry`.
+  - [ ] (c) **Tier-3 ground-truth capture** — protocol drafted
+        ([docs/self-guided-assessment/tier3-capture-protocol.md](docs/self-guided-assessment/tier3-capture-protocol.md));
+        blocked on a capture session. Feeds threshold re-tuning (`calibration.py`) + augment-vs-replace call.
 - [ ] Personal **mobile camera-prop reality test** for all 5 movements to calibrate coaching copy.
 
 ### 🔲 Phase 2 — Remaining
@@ -78,7 +89,7 @@ Provider-scored, no AI. Full scoring workflow + Corrective Exercise Tracker feed
 - **Admin password** reset off the shipped default.
 
 ### 🔲 Next (resume here)
-- [ ] **Push `hma-manual-ui-polish`** and decide the merge path to `main` (done in this session — verify on GitHub).
+- [x] **Merged to `main`** (2026-07-31) — the whole `hma-manual-ui-polish` stack fast-forwarded in.
 - [ ] **Device-test the camera recorder** (provider laptop webcam + a phone) and the employee capture flow.
 - [ ] Apply the owner's **UX notes** collected while testing the Manual app.
 - [ ] (Optional) Add the same **live recorder to the employee upload page** (today it uses a native

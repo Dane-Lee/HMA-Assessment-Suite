@@ -40,6 +40,38 @@ def _safe_span(values: list[float], default: float = 0.0) -> float:
     return (max(values) - min(values)) if values else default
 
 
+ROBUST_PEAK_WINDOW = 3
+
+
+def _smooth_series(values: list[float], window: int = ROBUST_PEAK_WINDOW) -> list[float]:
+    """Edge-padded rolling median to suppress single-frame landmark spikes before
+    extreme-value reduction. Raw max()/min()/span over a jittery per-frame series is
+    biased toward the noisiest frame (see
+    docs/self-guided-assessment/rotation-accuracy-findings.md); smoothing first, then
+    reducing, keeps the true peak while rejecting lone outliers."""
+    n = len(values)
+    if window <= 1 or n <= 2:
+        return list(values)
+    half = window // 2
+    padded = [values[0]] * half + list(values) + [values[-1]] * half
+    return [sorted(padded[i : i + 2 * half + 1])[half] for i in range(n)]
+
+
+def _robust_max(values: list[float], default: float = 0.0) -> float:
+    return max(_smooth_series(values)) if values else default
+
+
+def _robust_min(values: list[float], default: float = 0.0) -> float:
+    return min(_smooth_series(values)) if values else default
+
+
+def _robust_span(values: list[float], default: float = 0.0) -> float:
+    if not values:
+        return default
+    smoothed = _smooth_series(values)
+    return max(smoothed) - min(smoothed)
+
+
 @dataclass(slots=True)
 class FramePose:
     timestamp_seconds: float
@@ -322,6 +354,20 @@ class HybridFeatureExtractor:
             abs(frame.nose_x - mid_shoulder_x[index]) / shoulder_widths[index]
             for index, frame in enumerate(frames)
         ]
+        # Yaw-specific cue (prototype, non-gating): a real axial head turn makes one ear face
+        # the camera while the other self-occludes, so their MediaPipe visibilities split apart;
+        # a pure head-slide or side-bend leaves both ears facing the same way (asymmetry ~0).
+        # The production chin_midline_clearance_ratio (lateral nose-x) cannot tell those apart.
+        # Logged in debug_metrics only so real captures accumulate it for the Tier-3 study; it is
+        # NOT a fault input yet (see docs/self-guided-assessment/models/cervical_ear_yaw_model.py).
+        ear_visibility_asymmetry = [
+            abs(frame.left_ear_visibility - frame.right_ear_visibility) for frame in frames
+        ]
+        ear_visibility_asymmetry_norm = [
+            abs(frame.left_ear_visibility - frame.right_ear_visibility)
+            / (frame.left_ear_visibility + frame.right_ear_visibility + EPSILON)
+            for frame in frames
+        ]
         nose_vertical_path = [frame.nose_y for frame in frames]
         shoulder_depth = [
             abs(frame.left_shoulder_z - frame.right_shoulder_z) / shoulder_widths[index]
@@ -378,13 +424,13 @@ class HybridFeatureExtractor:
         ]
 
         features = MovementFeatures(
-            chin_midline_clearance_ratio=_clamp(max(nose_offsets), 0.0, 1.5),
-            shoulder_drift_ratio=_clamp(_safe_span(mid_shoulder_x) / _safe_mean(shoulder_widths, 1.0), 0.0, 1.5),
+            chin_midline_clearance_ratio=_clamp(_robust_max(nose_offsets), 0.0, 1.5),
+            shoulder_drift_ratio=_clamp(_robust_span(mid_shoulder_x) / _safe_mean(shoulder_widths, 1.0), 0.0, 1.5),
             forward_head_ratio=_clamp(_safe_mean(head_forward), 0.0, 1.5),
-            neck_path_deviation_ratio=_clamp(_safe_span(nose_vertical_path) / _safe_mean(torso_lengths, 1.0), 0.0, 1.5),
-            excessive_effort_ratio=_clamp((_safe_span(mid_shoulder_x) + _safe_span(nose_vertical_path)) * 2.5, 0.0, 1.2),
-            trunk_rotation_angle_degrees=_clamp(max(trunk_rotations), 0.0, 90.0),
-            lower_extremity_movement_ratio=_clamp(max(lower_ext_motion), 0.0, 1.2),
+            neck_path_deviation_ratio=_clamp(_robust_span(nose_vertical_path) / _safe_mean(torso_lengths, 1.0), 0.0, 1.5),
+            excessive_effort_ratio=_clamp((_robust_span(mid_shoulder_x) + _robust_span(nose_vertical_path)) * 2.5, 0.0, 1.2),
+            trunk_rotation_angle_degrees=_clamp(_robust_max(trunk_rotations), 0.0, 90.0),
+            lower_extremity_movement_ratio=_clamp(_robust_max(lower_ext_motion), 0.0, 1.2),
             spine_pelvis_deviation_ratio=_clamp(
                 _safe_mean(
                     [
@@ -396,12 +442,12 @@ class HybridFeatureExtractor:
                 1.2,
             ),
             cervical_motion_ratio=_clamp(
-                max(cervical_rotations) / max(max(trunk_rotations), 1.0),
+                _robust_max(cervical_rotations) / max(_robust_max(trunk_rotations), 1.0),
                 0.0,
                 1.5,
             ),
             back_knee_depth_ratio=_clamp(
-                max(back_knee_y[index] - back_ankle_y[index] for index in range(len(frames)))
+                _robust_max([back_knee_y[index] - back_ankle_y[index] for index in range(len(frames))])
                 / _safe_mean(torso_lengths, 1.0),
                 0.0,
                 1.2,
@@ -444,12 +490,12 @@ class HybridFeatureExtractor:
                 1.0,
             ),
             body_control_ratio=_clamp(
-                1.0 - (_safe_span(mid_hip_x) + _safe_span(mid_shoulder_x)) * 1.6,
+                1.0 - (_robust_span(mid_hip_x) + _robust_span(mid_shoulder_x)) * 1.6,
                 0.0,
                 1.0,
             ),
-            balance_loss_ratio=_clamp((_safe_span(mid_hip_x) + _safe_span(mid_shoulder_x)) * 1.2, 0.0, 1.2),
-            body_rotation_ratio=_clamp(max(shoulder_depth), 0.0, 1.2),
+            balance_loss_ratio=_clamp((_robust_span(mid_hip_x) + _robust_span(mid_shoulder_x)) * 1.2, 0.0, 1.2),
+            body_rotation_ratio=_clamp(_robust_max(shoulder_depth), 0.0, 1.2),
             foot_collapse_ratio=_clamp(
                 _safe_mean(
                     [
@@ -461,11 +507,11 @@ class HybridFeatureExtractor:
                 1.2,
             ),
             knee_collapse_ratio=_clamp(
-                max(
+                _robust_max([
                     abs((frame.right_knee_x if side_is_right else frame.left_knee_x) - (frame.right_hip_x if side_is_right else frame.left_hip_x))
                     / hip_widths[index]
                     for index, frame in enumerate(frames)
-                )
+                ])
                 * 0.9,
                 0.0,
                 1.2,
@@ -482,12 +528,12 @@ class HybridFeatureExtractor:
                 0.0,
                 1.0,
             ),
-            hand_distance_ratio=_clamp(min(hand_distances), 0.0, 2.0),
-            bottom_hand_reach_ratio=_clamp(max(bottom_hand_reach), 0.0, 1.5),
-            top_hand_midline_ratio=_clamp(max(top_hand_midline), 0.0, 1.0),
-            lateral_flexion_ratio=_clamp(_safe_span(mid_shoulder_x) / _safe_mean(torso_lengths, 1.0), 0.0, 1.2),
+            hand_distance_ratio=_clamp(_robust_min(hand_distances), 0.0, 2.0),
+            bottom_hand_reach_ratio=_clamp(_robust_max(bottom_hand_reach), 0.0, 1.5),
+            top_hand_midline_ratio=_clamp(_robust_max(top_hand_midline), 0.0, 1.0),
+            lateral_flexion_ratio=_clamp(_robust_span(mid_shoulder_x) / _safe_mean(torso_lengths, 1.0), 0.0, 1.2),
             rounded_shoulder_ratio=_clamp(_safe_mean(head_forward) * 0.8 + _safe_mean(shoulder_depth) * 0.2, 0.0, 1.2),
-            finger_walk_ratio=_clamp(_safe_span(hand_distances), 0.0, 1.2),
+            finger_walk_ratio=_clamp(_robust_span(hand_distances), 0.0, 1.2),
         )
         features.debug_metrics = {
             "duration_seconds": context.duration_seconds,
@@ -497,6 +543,9 @@ class HybridFeatureExtractor:
             "shoulder_drift_ratio": features.shoulder_drift_ratio,
             "forward_head_ratio": features.forward_head_ratio,
             "neck_path_deviation_ratio": features.neck_path_deviation_ratio,
+            # cervical rotation — prototype yaw cue, non-gating (rejects slide/side-bend confounds)
+            "ear_visibility_asymmetry": _robust_max(ear_visibility_asymmetry),
+            "ear_visibility_asymmetry_norm": _robust_max(ear_visibility_asymmetry_norm),
             # trunk rotation
             "trunk_rotation_angle_degrees": features.trunk_rotation_angle_degrees,
             "lower_extremity_movement_ratio": features.lower_extremity_movement_ratio,
