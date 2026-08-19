@@ -1,0 +1,2497 @@
+{
+ "jobs": [
+  {
+   "id": "seed-beam-weld-operator",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Beam Weld Operator",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "For breaks / lunch.",
+     "notes": "Employee has minimum of two 10 minute breaks and one 20 minute lunch break per shift. Additional breaks vary on shift length."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Working at welding machine, welding workstation, and using overhead hoist remote / robot remote.",
+     "notes": "Surface: Concrete, metal, padding."
+    },
+    "walking": {
+     "freq": "freq",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: Concrete, metal, paddingTypical distance = up to 10 ft. at one time."
+    },
+    "forwardbending": {
+     "freq": "freq",
+     "task": "Performing welding activities, lifting parts for the cart or pallet, removing the beams from the conveyor, placing beams in the bins, latching / unlatching the hooks of the overhead hoist and performing housekeeping duties.",
+     "notes": "Full / Partial / Sustained with mild thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 10 seconds at one time for welding and hoist activities.Up to 100 lbs. May use the hoist for the heavier beams.*The worker has the option to squat in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Lifting parts for the cart or pallet, removing beams from conveyor, placing beams in the bins, latching / unlatching the hooks of the overhead hoist and performing housekeeping duties.",
+     "notes": "Full / Partial / Sustained for up to 5 seconds.*The worker has the option to forward bend in lieu of squatting."
+    },
+    "kneeling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces or boxes from the floor. For cleanup.",
+     "notes": "*The worker has the option to squat or forward bend in lieu of kneeling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "crawling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces that fall or when cleaning.",
+     "notes": "*The worker has the option to squat or kneel lieu of crawling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Stairs for occasional meetings or ramps.",
+     "notes": "Greatest Distance:__6 inchesTypical Distance:_6 inchesSurface: Aluminum / Wood / Concrete"
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Placing parts into the welding machine, removing beams from conveyor, performing welding activities, lifting parts for the cart or pallet, pushing buttons on the control panel, latching / unlatching the hooks of the overhead hoist, and performing housekeeping duties.",
+     "notes": "Reach Range: Floor to 60\". Horizontal Reach: Up to 24\". Conveyor = 26 inches (lowest) and 48 inches (highest).Welder machine control panel = 29 - 30 inches.Parts cart = 12 / 24 / 45 / 60 inches.For welding activities the elbows are within 4 -6 inches of the body. Hoist hooks = adjustable, mostly waist, chest or shoulder height.May have thoracic rotation and lateral flexion."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, and squatting.",
+     "notes": "Surface = concrete, meta, padding.Critical for safety."
+    },
+    "cervical": {
+     "freq": "freq",
+     "task": "For observation / operation of the welding and use of the remotes.",
+     "notes": "Partial range of motion needed.Neck flexion may be sustained for 10 seconds at one time with welding activities and use of remotes."
+    },
+    "driving": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, and squatting.",
+     "notes": "Bilateral lower extremity.Critical for safety."
+    },
+    "simplegrasp": {
+     "freq": "freq",
+     "task": "Handling of welding gun, hand tools, QC tools, and small parts.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "const",
+     "task": "Uses of welding gun, hammer, chisel, QC tools, and handling of the hoist remote and hooks, large parts, welding screen, and beams.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "finemanip": {
+     "freq": "occ",
+     "task": "Pushing buttons on the control panels and remote for robot, writing for inventory log and use of paint pen.",
+     "notes": "Dominant hand right or left.Welding machine control panel = 29 - 30 inches."
+    },
+    "pinching": {
+     "freq": "occ",
+     "task": "Use of QC tools, remote for hoist/robot, holding papers, and handling of stamp tool.",
+     "notes": "Sustained for up to 10 seconds while using the remotes.Dominant hand right or left.May use bilateral upper extremity for some activities.Pulp/Single tip, doubletip/chuck, tip pressing, thumbpressing, triggering, tip pinch,lateral/key grip-pinch"
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Beams/ beam blanks",
+      "freq": "Frequent",
+      "force": "75",
+      "detail": "26 - 38 inches to 47 inches.Overhead hoist available."
+     },
+     {
+      "item": "Bottom plates.",
+      "freq": "Frequent",
+      "force": "15",
+      "detail": "6 inches to 47 inches.The bottom plates may be loaded into the beam from the press operator."
+     },
+     {
+      "item": "Small parts.",
+      "freq": "Frequent",
+      "force": "5",
+      "detail": ".From a multiple shelf carts (12 / 24 / 45 / 60 inches) to 38 inches."
+     },
+     {
+      "item": "QC hand tools, welding gun and hand tools.",
+      "freq": "Frequent",
+      "force": "5",
+      "detail": "From 37 inches to 50 inches."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Beam and beam blanks.",
+      "freq": "Frequent",
+      "force": "75",
+      "detail": "2 hand carry required for parts. 5- 10 ft. Hoist available."
+     },
+     {
+      "item": "Bottom plates.",
+      "freq": "Frequent",
+      "force": "15",
+      "detail": "2 hand carry required, operators may choose to carry more than 1 plate. 5- 15 ft."
+     },
+     {
+      "item": "Small parts",
+      "freq": "Frequent",
+      "force": "3",
+      "detail": "3-5 ft."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Overhead hoist",
+      "freq": "Frequent",
+      "force": "50",
+      "detail": "Up to 10ft. 30lbsF more frequent."
+     },
+     {
+      "item": "Beams on the conveyor system or blanks off of conveyor line.",
+      "freq": "Frequent",
+      "force": "30",
+      "detail": "Up to 25ft. Force increases with amount of beams pushed."
+     },
+     {
+      "item": "Weld curtain closed or open.",
+      "freq": "Frequent",
+      "force": "25",
+      "detail": "5 ft."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY - Beam Weld Operator.docx",
+   "conflicts": []
+  },
+  {
+   "id": "seed-finisher-operator",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Finisher Operator",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "For breaks / lunch.",
+     "notes": "Period of time: 10 - 20 minutes at a time."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Working at QC workstation, control panels and using overhead hoist remote.",
+     "notes": "QC workstation = 41 inches.Control panels = 58-66 inches.Surface = concrete / padding."
+    },
+    "walking": {
+     "freq": "freq",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: Concrete / metal.Typical distance = 50 - 75 ft.Greatest distance = 100 ft."
+    },
+    "forwardbending": {
+     "freq": "occ",
+     "task": "Performing QC checks, using Allen wrench to change inserts, using air gun to clear debris from the machine, latching / unlatching the hooks of the overhead hoist and performing housekeeping duties.",
+     "notes": "Partial / Sustained with mild thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 5 seconds at one time.Machine height = 54 - 56 inches for changing inserts.*The worker has the option to squat or kneel in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Performing QC checks, latching / unlatching the hooks of the overhead hoist and performing housekeeping duties.",
+     "notes": "Partial / Sustained with mild thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 5 seconds at one time.*The worker has the option to forward bend or kneel in lieu of squatting."
+    },
+    "kneeling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "crawling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Platform to the machine.",
+     "notes": "10 inch step-up."
+    },
+    "reaching": {
+     "freq": "freq",
+     "task": "Operate controls / buttons / switches, latching / unlatching overhead hoist hooks, clearing debris from the machine and performing QC checks.",
+     "notes": "Machine touch screen = 58 - 66 inches.Hoist hooks = adjustable, mostly chest / shoulder level.May have thoracic rotation and lateral flexion."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and climbing.",
+     "notes": "Surface = concrete, padding or metal.Critical for safety."
+    },
+    "cervical": {
+     "freq": "freq",
+     "task": "For observation / operation of process, moving axles with overhead hoist, observation of the gentry, and performing QC checks.",
+     "notes": "Full range of motion needed.May be sustained for 5 - 10 seconds at one time."
+    },
+    "driving": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and climbing.",
+     "notes": "Bilateral lower extremity.Critical for safety."
+    },
+    "simplegrasp": {
+     "freq": "occ",
+     "task": "Use of hand tools, QC measurement tools, air gun.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "occ",
+     "task": "Handling air gun, small hand tools, QC measurement tools, and hoist remote.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "finemanip": {
+     "freq": "occ",
+     "task": "Pushing buttons on control panel, touch screen, writing, and use of calculator.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities."
+    },
+    "pinching": {
+     "freq": "occ",
+     "task": "Use of remote for hoist, QC measurement tools, small hand tools, and changing inserts.",
+     "notes": "Sustained for up to 5 seconds while using the remote or QC tools.Dominant hand right or left.May use bilateral upper extremity for some activities."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "QC measurement tools.",
+      "freq": "Occasional",
+      "force": "",
+      "detail": "<1 - 5 lbs. for most toolsHeaviest tool = 20 lbs. and 7.5 ft. long"
+     }
+    ],
+    "carry": [
+     {
+      "item": "QC measurement tools.",
+      "freq": "Occasional",
+      "force": "",
+      "detail": "3 -5 ft."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Small hand tools - Torx wrench, overhead hoist, large Allen wrench w cheater bar, pry bar, die tool, axle.",
+      "freq": "Occasional",
+      "force": "1",
+      "detail": "10 - 50 lbs. of force."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY - Finisher Operator.docx",
+   "conflicts": []
+  },
+  {
+   "id": "seed-material-handler",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Material Handler",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "const",
+     "task": "Operation of fork truck.",
+     "notes": "Seat with adjustments. Period of time: 20 - 30 minutes at a time. Employee has minimum of two 10 minute breaks and one 20 minute lunch break per shift. Additional breaks vary on shift length."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Operation of reach truck, working at control panel of auto wrapper and using battery exchange unit.",
+     "notes": "Surface: concrete / metal / padding. Some operators work on a stand up lift. Period of time: 20 - 30 minutes at a time.Control panels = 44 inches for auto wrapper."
+    },
+    "walking": {
+     "freq": "occ",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: Concrete.Typical distance = 20 ft.Greatest distance = 80 ft."
+    },
+    "forwardbending": {
+     "freq": "occ",
+     "task": "Operation of fork or reach truck, banding and wrapping supplies, performing inventory count and performing housekeeping duties.",
+     "notes": "Partial / Sustained with thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 10 seconds at one time.*The worker has the option to squat or kneel in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Banding and wrapping supplies, performing inventory count and performing housekeeping duties.",
+     "notes": "Full / Partial.May be sustained for up to 10 seconds at one time.*The worker has the option to forward bend or kneel in lieu of squatting."
+    },
+    "kneeling": {
+     "freq": "occ",
+     "task": "Banding and wrapping supplies, performing inventory count and performing housekeeping duties.",
+     "notes": "Surface: Concrete.Single knee.May be sustained for up to 10 seconds at one time.*The worker has the option to squat or forward bend in lieu of kneeling."
+    },
+    "crawling": {
+     "freq": "occ",
+     "task": "",
+     "notes": ""
+    },
+    "climbing": {
+     "freq": "freq",
+     "task": "Fork or Reach truck. Stairs for meetings or using ramps.",
+     "notes": "Fork = 16 inch step-up.Reach = 10 inch step-upSurface: metal/ concrete/ padding."
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Operate controls / buttons / levers / switches, replacing cylinder / battery, banding / wrapping/ stocking racks.",
+     "notes": "Reach Range: Floor to 72\".Up to arm's length with lumbar flexion, thoracic rotation and lateral flexion while operating the fork or reach truck.Up to 40 lbs. with propane cylinder change to 56 inches."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, kneeling and climbing.",
+     "notes": "Surface = concrete, padding or metal.Critical for safety."
+    },
+    "cervical": {
+     "freq": "const",
+     "task": "For observation / operation of PIT.",
+     "notes": "Full range of motion needed.May be sustained for up to one minute at a time."
+    },
+    "driving": {
+     "freq": "const",
+     "task": "Fork or Reach Truck.",
+     "notes": "Sitting or Standing operation."
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For sitting, standing, walking, squatting, kneeling and climbing.",
+     "notes": "Bilateral lower extremity.Critical for safety.Fork truck operation: Foot pedal operation, both feet, non-weight bearing. Reach truck operation: Foot pedal operation, single foot, weight bearing."
+    },
+    "simplegrasp": {
+     "freq": "const",
+     "task": "Handling controls of fork / reach truck and plastic wrap.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "occ",
+     "task": "Handling controls of fork / reach truck, propane cylinder, battery exchange unit, radio and RF scanner.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "finemanip": {
+     "freq": "freq",
+     "task": "Pushing buttons on RF scanner, control panel of auto wrapper and battery exchange unit, writing, and use of calculator.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities."
+    },
+    "pinching": {
+     "freq": "const",
+     "task": "Use of radio, paperwork, and handling plastic wrap.",
+     "notes": "Pulp/Single tip, doubletip/chuck, tip pressing, thumbpressing, triggering, tip pinch,lateral/key grip-pinchSustained for up to 10 seconds while using the radioDominant hand right or left.May use bilateral upper extremity for some activities."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Cylinder, Plastic wrap.",
+      "freq": "Occasional",
+      "force": "40",
+      "detail": "Floor to 56 inches for cylinder.Floor to 22 inches for plastic wrap."
+     },
+     {
+      "item": "Small boxes of material",
+      "freq": "Frequent",
+      "force": "30",
+      "detail": "Floor to 56 inches, can adjust forks on lift to work at waist height to 56\"."
+     },
+     {
+      "item": "Large boxes of material",
+      "freq": "Occasional",
+      "force": "60",
+      "detail": "Floor to 56 inches, can adjust forks on lift to work at waist height to 56\"."
+     },
+     {
+      "item": "Hangers, hubs, propane cylinder or other large objects",
+      "freq": "Occasional",
+      "force": "80",
+      "detail": "Floor to 56 inches, can adjust forks on lift to work at waist height to 56\". Can get partner assist."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Cylinder, Plastic wrap.",
+      "freq": "Occasional",
+      "force": "40",
+      "detail": "<10 ft. Two handed carry required."
+     },
+     {
+      "item": "Boxes of material",
+      "freq": "Occasional",
+      "force": "60",
+      "detail": "<5 ft. Two handed carry required."
+     },
+     {
+      "item": "Hangers, Hubs, propane cylinder or other large objects",
+      "freq": "Occasional",
+      "force": "80",
+      "detail": "<5 ft. Two handed carry required. Can get partner assist."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Buttons and levers.",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Operating forklift or plastic wrap machine."
+     },
+     {
+      "item": "Boxes",
+      "freq": "Occasional",
+      "force": "20",
+      "detail": "Stocking Assembly line."
+     },
+     {
+      "item": "Roll carts with material",
+      "freq": "Occasional",
+      "force": "30",
+      "detail": "When restocking lines."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY - Material Handler.docx",
+   "conflicts": []
+  },
+  {
+   "id": "seed-press-operator",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Press Operator",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "For breaks / lunch.",
+     "notes": "Period of time: 10 - 20 minutes at a time."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Working at machine workstation and control panels, performing QC checks, loading and unloading parts and using overhead hoist remote.",
+     "notes": "Surface: Concrete, metal, padding.QC workstation = 35 inches.Writing workstation = 33 - 34 inches.Computer control panels = 62 - 69 inches.Press control stands = 34 - 44 inches.Railing system = 34 - 56 inches."
+    },
+    "walking": {
+     "freq": "occ",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: Concrete, metal, padding.Typical distance = 10 - 15 ft.Greatest distance = 50 ft."
+    },
+    "forwardbending": {
+     "freq": "const",
+     "task": "Placing / removing the parts from the press machine, railing and or racking system, taking QC measurements, attaching / removing the straps of the overhead hoist and performing housekeeping duties.",
+     "notes": "Full / Partial / Sustained with mild thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 5 seconds at one time.*The worker has the option to squat in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Placing axle on the lowest rack of the maroon racking system.",
+     "notes": "Partial / Sustained.May be sustained for up to 5 seconds at one time.*The worker has the option to forward bend in lieu of squatting for some activities."
+    },
+    "kneeling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "crawling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Machine platform.",
+     "notes": "6 inch step-up."
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Operate controls / buttons / levers, placing and removing parts, taking QC measurements, attaching / removing overhead hoist straps.",
+     "notes": "Up to 65 lbs.Press control stands = 34 - 44 inches.Computer control panels = 62 - 69 inches.QC workstation = 35 inches.Railing system = 34 - 56 inches.Writing workstation = 33 - 34 inches.Hoist straps = adjustable, chest or shoulder height.May have thoracic rotation and lateral flexion."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and climbing.",
+     "notes": "Surface = concrete, padding or metal.Critical for safety."
+    },
+    "cervical": {
+     "freq": "const",
+     "task": "For observation / operation of press process, moving axles with overhead hoist.",
+     "notes": "Partial range of motion needed.May be sustained for 5 - 10 seconds at one time."
+    },
+    "driving": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and climbing.Foot pedal machine control.",
+     "notes": "Bilateral lower extremity.Critical for safety.Single foot, weight bearing."
+    },
+    "simplegrasp": {
+     "freq": "const",
+     "task": "Use of QC measurement tools, rag, Mo caps, levers and buttons.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "const",
+     "task": "Handling parts, pushing buttons, use of QC measurement tools, and spray cleaner can.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "finemanip": {
+     "freq": "const",
+     "task": "Pushing buttons on control panels, touch screen, writing for log book and with paint pen, and use of calculator.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities."
+    },
+    "pinching": {
+     "freq": "occ",
+     "task": "Use of QC measurement tools and remote for hoist.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.QC Tool = pinch with a finger twist.Sustained for up to 15 seconds while using the remote, this is for only the RCA and Camber process."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Sheet metal / parts (beam).",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "Adjustable pallets for employee's height.Mostly, 37 - 50 inches.60 - 65 lbs.Move sheet metal from staging area to the machine."
+     },
+     {
+      "item": "Dyes and punches for small part's press in laser room.",
+      "freq": "Occasional",
+      "force": "1",
+      "detail": "Up to 70 lbs.Uses overhead crane to move the dyes that are 200 - 300 lbs."
+     },
+     {
+      "item": "QC tools: cans, blocks and level for RCA Press. This press and the Camber Press are used on a limited basis.",
+      "freq": "Occasional",
+      "force": "",
+      "detail": "Can = 17 lbs.Block = 14 lbs.Level = 15 lbs."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Beam.",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "10 ft.60 - 65 lbs.Carry the beam from the machine to the QC check area then to the railing system at 38 inches."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Parts into and from the press.",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "10 - 30 lbs. of force"
+     },
+     {
+      "item": "Axle on overhead hoist.Some of the press machines use overhead hoist with slings and or spreader bar.",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "50 lbs. of force"
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY - Press Operator.docx",
+   "conflicts": [
+    "squatting: grid=never detail=occ -> kept occ"
+   ]
+  },
+  {
+   "id": "seed-station-30-paint-booth",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Station 30 - Paint Booth",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "For breaks / lunch.",
+     "notes": "Period of time: 10 - 20 minutes at a time."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Operation of the painting process.",
+     "notes": "Surface: metal grates / plates."
+    },
+    "walking": {
+     "freq": "freq",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: metal / concrete.Typical distance = 10 - 20 ft."
+    },
+    "forwardbending": {
+     "freq": "freq",
+     "task": "Painting axle unit, covering axle with masking tape and performing housekeeping duties.",
+     "notes": "Full / Partial / Sustained with moderate thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 10 seconds at one time.Weight = 1 - 3 lbs. for paint gun.*The worker has the option to squat in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Painting axle unit, covering axle with masking tape and performing housekeeping duties.",
+     "notes": "Partial / Sustained.May be sustained for up to 10 seconds at one time.*The worker has the option to forward bend in lieu of squatting."
+    },
+    "kneeling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "crawling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Stairs into paint booth.",
+     "notes": "3 metal steps.7 inch height."
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Painting axle unit, covering axle with masking tape and performing housekeeping duties.",
+     "notes": "May be sustained for 10 seconds at one time with 1 -3 lbs. for paint gun.Axle height = 60 inches.Tape height = 54 inches.May have lumbar flexion, thoracic rotation and lateral flexion."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, stepping over hoses / lines and climbing.",
+     "notes": "Surface = metal.Critical for safety."
+    },
+    "cervical": {
+     "freq": "const",
+     "task": "For observation / operation of the paint process",
+     "notes": "Partial range of motion needed.Neck extension, rotation and lateral flexion may be sustained for 10 seconds at one time."
+    },
+    "driving": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, stepping over hoses / lines and climbing.",
+     "notes": "Bilateral lower extremity.Critical for safety."
+    },
+    "simplegrasp": {
+     "freq": "const",
+     "task": "Handling paint gun and masking tape.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "const",
+     "task": "Use of paint gun and masking tape.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities.May be sustained for up to 45 seconds at one time."
+    },
+    "finemanip": {
+     "freq": "occ",
+     "task": "Pushing buttons on control panel to stop the line for cleaning and writing on log forms.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities."
+    },
+    "pinching": {
+     "freq": "freq",
+     "task": "Handling masking tape.",
+     "notes": "Dominant hand right or left.Will use bilateral upper extremity for this activities."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Paint gun and hose unit, respirator line.",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "1 -3 lbs."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Paint gun and hose unit, respirator line.",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "5 lbs.10 - 20 ft. in a circular pattern around the axle.Carries throughout the paint process."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Paint gun and hose unit, respirator line.",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "10 - 30 lbs. of force."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY - Station 30 - Paint Booth.docx",
+   "conflicts": []
+  },
+  {
+   "id": "seed-tube-heat-treat-operator",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Tube Heat Treat Operator",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "For breaks / lunch.",
+     "notes": "Period of time: 10 - 20 minutes at a time."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Working at workstation and control panels and using overhead crane remote.",
+     "notes": "Keyboard = 38 inches.Writing workstation = 41 inches.Control panels = 58-66 inches."
+    },
+    "walking": {
+     "freq": "occ",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: Concrete, wood, metal.Typical distance = 100 - 200 ft.Greatest distance = 300 ft."
+    },
+    "forwardbending": {
+     "freq": "occ",
+     "task": "Using Allen wrench to change inserts, using rake to clear debris from the machine, hook / unhooking the straps of the overhead crane (may be kneeling or squatting) and performing housekeeping duties.",
+     "notes": "Partial / Sustained with mild thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 10 seconds at one time.Machine height = 49 inches for changing inserts and clearing debris.*The worker has the option to squat or kneel in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Hook / unhooking the straps of the overhead crane and performing housekeeping duties.",
+     "notes": "Full / Partial.May be sustained for up to 10 seconds at one time.*The worker has the option to forward bend or kneel in lieu of squatting."
+    },
+    "kneeling": {
+     "freq": "occ",
+     "task": "Hook / unhooking the straps of the overhead crane.",
+     "notes": "Surface: Wood / Metal / Concrete.Single knee.May be sustained for up to 10 seconds at one time.*The worker has the option to squat or forward bend in lieu of kneeling."
+    },
+    "crawling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Fixed vertical ladder to the 2nd floor platform to remove metal dust from the machine..May climb up to 44 inches on the tubes to get to the straps.",
+     "notes": "Vertical Ladder = 17 rungs"
+    },
+    "reaching": {
+     "freq": "freq",
+     "task": "Operate controls / buttons / levers / switches, hooking / unhooking overhead crane straps, clearing debris from the machine and adding coolant to the machine.",
+     "notes": "Workstation touch screen = 58 - 66 inches. Shot Peen hopper = 44 inches with 50 lbs. Machine height = 49 inches.Crane straps = up to 78 inches to below knee level when squatting.Coolant = 50 inches.May have thoracic rotation and lateral flexion."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, kneeling and climbing.",
+     "notes": "Surface = concrete, padding or metal.May be slick around the coolant area.Critical for safety."
+    },
+    "cervical": {
+     "freq": "freq",
+     "task": "For observation / operation of process, moving tubes with overhead crane.",
+     "notes": "Full range of motion needed.May be sustained for 5 - 10 seconds at one time."
+    },
+    "driving": {
+     "freq": "occ",
+     "task": "Fork Truck.",
+     "notes": "2 - 3 times per month to empty hoppers or to move product."
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, kneeling and climbing.",
+     "notes": "Bilateral lower extremity.Critical for safety.Rarely for Fork truck operation: Foot pedal operation, both feet, non-weight bearing."
+    },
+    "simplegrasp": {
+     "freq": "occ",
+     "task": "Hand tool use, mouse, moving metal gates to the tube stands.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "occ",
+     "task": "Handling container for fluids, crane remote, air hose, snips to cut metal banding and moving tubes.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "finemanip": {
+     "freq": "freq",
+     "task": "Computer use, keyboard, mouse, pushing buttons on control panel, use of stylus, touch screen, writing, and use of calculator.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities."
+    },
+    "pinching": {
+     "freq": "occ",
+     "task": "Use of remote for crane, metal sample test (Almen strips), using screw driver, and changing inserts.",
+     "notes": "Sustained for up to 45 seconds while using the remote.Dominant hand right or left.May use bilateral upper extremity for some activities."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Shot peen, metal dust (bucket), coolant container.",
+      "freq": "Occasional",
+      "force": "1",
+      "detail": "25-60 lbs.Floor to 55 inches."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Coolant container.",
+      "freq": "Occasional",
+      "force": "1",
+      "detail": "50-60 lbs.300 feet."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Guiding tube while using the overhead crane, loaded cart, pry bar, metal tube on racks, using hand tools, climbing vertical ladder (body weight).",
+      "freq": "Occasional",
+      "force": "1",
+      "detail": "10-50 ft. lbs.100-300 feet."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY - Tube Heat Treat Operator.docx",
+   "conflicts": []
+  },
+  {
+   "id": "seed-wrap-weld-operator",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Wrap Weld Operator",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "For breaks / lunch.",
+     "notes": "Period of time: 10 - 20 minutes at a time."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Working at robot workstation, welding workstation, control panels, obtaining axles from maroon racking system and using overhead crane remote.",
+     "notes": "Racking system = 20 - 55 inches.Writing workstation = 44 inches.Control panels = 55-69 inches.Bins = 12 - 40 inches.Cart handle = 45 inches.Surface = concrete, padding."
+    },
+    "walking": {
+     "freq": "freq",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: Concrete.Typical distance = 10 - 20 yds."
+    },
+    "forwardbending": {
+     "freq": "freq",
+     "task": "Obtaining wraps from the bins, obtaining axle from the racking system, welding, latching the hooks of the overhead hoist and performing housekeeping duties.",
+     "notes": "Partial / Sustained with mild thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 20 - 30 seconds at one time with welding activities.Welding workstation height = 40 inches*The worker has the option to squat in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Obtaining wraps from the bins, obtaining axle from the racking system, latching the hooks of the overhead hoist and performing housekeeping duties.",
+     "notes": "Partial.*The worker has the option to forward bend in lieu of squatting for some activities."
+    },
+    "kneeling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "crawling": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "climbing": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Operate controls / buttons / levers / switches, latching / unlatching the overhead hoist hooks, welding",
+     "notes": "Workstation touch screen = 55 - 69 inches. Welding work station = 40 inches.Racking system = 20 - 55 inchesMay have thoracic rotation and lateral flexion."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, and squatting.",
+     "notes": "Surface = concrete, padding.Critical for safety."
+    },
+    "cervical": {
+     "freq": "const",
+     "task": "For observation / operation of process, using overhead hoist, and welding.",
+     "notes": "Full range of motion needed.May be sustained for 20 - 30 seconds at one time with welding activities."
+    },
+    "driving": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, and squatting.",
+     "notes": "Bilateral lower extremity.Critical for safety."
+    },
+    "simplegrasp": {
+     "freq": "occ",
+     "task": "Handling QC tools and small hand tools, moving axle with hoist, and moving the control lever.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "occ",
+     "task": "Handling wraps, hoist remote, welding gun, and pliers to clean the robot.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "finemanip": {
+     "freq": "freq",
+     "task": "Pushing buttons on control panel and touch screen, and writing.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities."
+    },
+    "pinching": {
+     "freq": "freq",
+     "task": "Handling of paper and filler weld material, use of remote for hoist, and use of small hand tools.",
+     "notes": "Sustained for up to 10 seconds while using the remote.Dominant hand right or left.May use bilateral upper extremity for some activities."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Wraps.",
+      "freq": "Frequent",
+      "force": "",
+      "detail": "25 lbs. as a set.Picks up a set in each hand.Floor to 55 inches."
+     },
+     {
+      "item": "Hand tools and remote.",
+      "freq": "Frequent",
+      "force": "",
+      "detail": "<1 - 5 lbs."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Wraps.",
+      "freq": "Frequent",
+      "force": "",
+      "detail": "15 - 20 ft."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Overhead hoist and axles and alignment of the axle on the wrap weld machine.",
+      "freq": "Frequent",
+      "force": "",
+      "detail": "10 - 50 lbs. of force."
+     },
+     {
+      "item": "Loaded cart.",
+      "freq": "Occasional",
+      "force": "1",
+      "detail": "65+ lbs. of force."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY - Wrap Weld Operator.docx",
+   "conflicts": []
+  },
+  {
+   "id": "seed-kitting",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Kitting",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "Breaks and lunch",
+     "notes": "Employee has minimum of two 10 minute breaks and one 20 minute lunch break per shift. Additional breaks vary on shift length."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Performing various tasks throughout the workday such:Preparing bags and boxes with miscellaneous small parts",
+     "notes": "Surface: ConcretePeriod of time: Can be up to 2-3 minutes before moving about the areaStatic"
+    },
+    "walking": {
+     "freq": "freq",
+     "task": "Walking task to task Retrieving miscellaneous piecesCarrying miscellaneous boxes",
+     "notes": "Surface: ConcretePeriod of time: Up to 1 minute around the area, up to 5 minutes to the break roomGreatest distance: 120 ft. to break roomTypical distance: 20 ft - 55 ft. around the work area"
+    },
+    "forwardbending": {
+     "freq": "freq",
+     "task": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "notes": "*The worker has the option to squat or kneel in lieu of forward bend.Full / Partial / Repetitive / Static.With or without thoracic rotation.With or without UE reach; Horizontal distance: Up to 36\"With or without weight; Weight: Up to 20 lbs.Period of time: Up to 2-3 seconds"
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "notes": "*The worker has the option of forward bend or kneel in lieu of squatting.Full / Partial / Repetitive / Static.Period of time: Up to a few seconds before changing postures"
+    },
+    "kneeling": {
+     "freq": "occ",
+     "task": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "notes": "*The worker has the option to squat or forward bend in lieu of kneeling.Period of time: Up to a few seconds before changing postures.Single kneeSurface: Concrete"
+    },
+    "crawling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces that fall or when cleaning.",
+     "notes": "*The worker has the option to squat or kneel lieu of crawling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Stairs for occasional meetings or ramps.",
+     "notes": "Greatest Distance:__6 inchesTypical Distance:_6 inchesSurface: Aluminum / Wood / Concrete"
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Retrieving miscellaneous small parts, loading boxes onto skids",
+     "notes": "Full / Partial / Repetitive / Static.Range of reach: Floor - 66\"With or without thoracic rotation.With or without forward bend or lateral flexion; Horizontal reach distance: Up to 36\"With or without weight; Weight: Up to 20 lbs.Period of time (static): Up to a few seconds"
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, kneeling, and climbing.",
+     "notes": "Critical for safety.Surface: Concrete and metal"
+    },
+    "cervical": {
+     "freq": "const",
+     "task": "Most tasksWalkingLooking for small parts",
+     "notes": "Critical for safety while navigating walking/working surfaces.Full / Partial range of motion.Static or Repetitive"
+    },
+    "driving": {
+     "freq": "occ",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, kneeling, and climbing.Single or Both Feet.Weight or Non-weight bearing",
+     "notes": "Critical for safety.R / L / Bilateral LE required"
+    },
+    "simplegrasp": {
+     "freq": "freq",
+     "task": "Utilizing small hand toolsPicking up small nuts & bolts",
+     "notes": "R/ L / Bilateral UE requiredFlexion / Extension / Pronation / Supination / Deviation."
+    },
+    "firmgrasp": {
+     "freq": "freq",
+     "task": "Moving boxes",
+     "notes": "R/ L / Bilateral UE requiredFlexion / Extension / Pronation / Supination / Deviation."
+    },
+    "finemanip": {
+     "freq": "const",
+     "task": "Writing",
+     "notes": "R/ L / Bilateral UE requiredDeviation"
+    },
+    "pinching": {
+     "freq": "const",
+     "task": "Small hand toolsPicking up small nuts & boltsTagging / Labeling boxes",
+     "notes": "Pulp/Single tip, doubletip/chuck, tip pressing, thumbpressing, triggering, tip pinch,lateral/key grip-pinch R/ L / Bilateral UEWith Flexion/ Extension / Pronation / Supination / Deviation of the wrists."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Small parts/Bagged materials",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Employee will lift from heights ranging from floor to 66\""
+     },
+     {
+      "item": "Large parts",
+      "freq": "Frequent",
+      "force": "35",
+      "detail": "Employee will finish bagged materials and lift from 36\" to carry to 33\""
+     },
+     {
+      "item": "Finished Material Boxes",
+      "freq": "Constant",
+      "force": "80",
+      "detail": "Employee will lift from 36\" to 54\". Two man lift should be used for anything over 50 lbs."
+     },
+     {
+      "item": "Pallet or plywood",
+      "freq": "Occasional",
+      "force": "80",
+      "detail": "Lift Range: Floor to 48 inches."
+     },
+     {
+      "item": "Small Hand Tools (scanner, staple gun, etc…)",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Employee will lift from various heights ranging 33\"-36\""
+     }
+    ],
+    "carry": [
+     {
+      "item": "Small parts/Bagged materials",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Typically less than 10 ft. could be a distance up to 50 yards. 2 hand carry required as employee may carry multiple pieces at a time. Can use cart to transport to scale."
+     },
+     {
+      "item": "Large parts",
+      "freq": "Frequent",
+      "force": "35",
+      "detail": "Distance of 1-5 feet. Two hand carry required. Can use cart to transport to scale."
+     },
+     {
+      "item": "Finished Material Boxes",
+      "freq": "Constant",
+      "force": "80",
+      "detail": "Less than 1 foot. Conveyor ends at wrapping station so boxes are shifted from the conveyor line to pallet wrapper."
+     },
+     {
+      "item": "Pallet or plywood",
+      "freq": "Occasional",
+      "force": "80",
+      "detail": "< 5 ft. Employee will utilize two handed carry or push pallet on its side."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Parts Cart/ parts box cart",
+      "freq": "Occasional",
+      "force": "50",
+      "detail": "Cart is pushed at height of 36\" up to 20 ft. at a time. Force depends on weight added to cart."
+     },
+     {
+      "item": "Control buttons",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Height of 44-48\"Pushing buttons to count/clear parts"
+     },
+     {
+      "item": "Finished Material Boxes",
+      "freq": "Frequent",
+      "force": "30",
+      "detail": "Push at height of 36\" for <10'. Utilize the lift table at the end to push box onto cart without lifting."
+     },
+     {
+      "item": "Parts under storage racks that are on mag liners or wheeled platforms.",
+      "freq": "Occasional",
+      "force": "50",
+      "detail": "Parts bins can be pulled out from under the rack so they can reach the materials."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY- Kitting.docx",
+   "conflicts": [
+    "driving: grid=occ detail=never -> kept occ",
+    "finemanip: grid=occ detail=const -> kept const"
+   ]
+  },
+  {
+   "id": "seed-parts-box",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Parts Box",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "Breaks and lunch",
+     "notes": "Employee has minimum of two 10 minute breaks and one 20 minute lunch break per shift. Additional breaks vary on shift length."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Performing various tasks throughout the workday such:Preparing bags and boxes with miscellaneous small parts",
+     "notes": "Surface: ConcretePeriod of time: Can be up to 2-3 minutes before moving about the areaStatic"
+    },
+    "walking": {
+     "freq": "freq",
+     "task": "Walking task to task Retrieving miscellaneous piecesCarrying miscellaneous boxes",
+     "notes": "Surface: ConcretePeriod of time: Up to 1 minute around the area, up to 5 minutes to the break roomGreatest distance: 120 ft. to break roomTypical distance: 20 ft - 55 ft. around the work area"
+    },
+    "forwardbending": {
+     "freq": "freq",
+     "task": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "notes": "*The worker has the option to squat or kneel in lieu of forward bend.Full / Partial / Repetitive / Static.With or without thoracic rotation.With or without UE reach; Horizontal distance: Up to 36\"With or without weight; Weight: Up to 20 lbs.Period of time: Up to 2-3 seconds"
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "notes": "*The worker has the option of forward bend or kneel in lieu of squatting.Full / Partial / Repetitive / Static.Period of time: Up to a few seconds before changing postures"
+    },
+    "kneeling": {
+     "freq": "occ",
+     "task": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "notes": "*The worker has the option to squat or forward bend in lieu of kneeling.Period of time: Up to a few seconds before changing postures.Single kneeSurface: Concrete"
+    },
+    "crawling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces that fall or when cleaning.",
+     "notes": "*The worker has the option to squat or kneel lieu of crawling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Stairs for occasional meetings or ramps.",
+     "notes": "Greatest Distance:__6 inchesTypical Distance:_6 inchesSurface: Aluminum / Wood / Concrete"
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Retrieving miscellaneous small parts, loading boxes onto skids",
+     "notes": "Full / Partial / Repetitive / Static.Range of reach: Floor - 66\"With or without thoracic rotation.With or without forward bend or lateral flexion; Horizontal reach distance: Up to 36\"With or without weight; Weight: Up to 20 lbs.Period of time (static): Up to a few seconds"
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, kneeling, and climbing.",
+     "notes": "Critical for safety.Surface: Concrete and metal"
+    },
+    "cervical": {
+     "freq": "const",
+     "task": "Most tasksWalkingLooking for small parts",
+     "notes": "Critical for safety while navigating walking/working surfaces.Full / Partial range of motion.Static or Repetitive"
+    },
+    "driving": {
+     "freq": "occ",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, kneeling, and climbing.Single or Both Feet.Weight or Non-weight bearing",
+     "notes": "Critical for safety.R / L / Bilateral LE required"
+    },
+    "simplegrasp": {
+     "freq": "freq",
+     "task": "Utilizing small hand toolsPicking up small nuts & bolts",
+     "notes": "R/ L / Bilateral UE requiredFlexion / Extension / Pronation / Supination / Deviation."
+    },
+    "firmgrasp": {
+     "freq": "freq",
+     "task": "Moving boxes",
+     "notes": "R/ L / Bilateral UE requiredFlexion / Extension / Pronation / Supination / Deviation."
+    },
+    "finemanip": {
+     "freq": "const",
+     "task": "Writing",
+     "notes": "R/ L / Bilateral UE requiredDeviation"
+    },
+    "pinching": {
+     "freq": "const",
+     "task": "Small hand toolsPicking up small nuts & boltsTagging / Labeling boxes",
+     "notes": "Pulp/Single tip, doubletip/chuck, tip pressing, thumbpressing, triggering, tip pinch,lateral/key grip-pinch R/ L / Bilateral UEWith Flexion/ Extension / Pronation / Supination / Deviation of the wrists."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Small parts/Bagged materials",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Employee will lift from heights ranging from floor to 66\""
+     },
+     {
+      "item": "Large parts",
+      "freq": "Frequent",
+      "force": "35",
+      "detail": "Employee will finish bagged materials and lift from 36\" to carry to 33\""
+     },
+     {
+      "item": "Finished Material Boxes",
+      "freq": "Constant",
+      "force": "80",
+      "detail": "Employee will lift from 36\" to 54\". Two man lift should be used for anything over 50 lbs. Conveyor lift table available and should be used to move material onto carts with push/pull to limit actual lifting of boxes."
+     },
+     {
+      "item": "Small Hand Tools (scanner, staple gun, etc…)",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Employee will lift from various heights ranging 33\"-36\""
+     }
+    ],
+    "carry": [
+     {
+      "item": "Small parts/Bagged materials",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Typically less than 10 ft. could be a distance up to 50 yards. 2 hand carry required as employee may carry multiple pieces at a time. Can use cart to transport to scale."
+     },
+     {
+      "item": "Large parts",
+      "freq": "Frequent",
+      "force": "35",
+      "detail": "Distance of 1-5 feet. Two hand carry required. Can use cart to transport to scale."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Control buttons/scanner trigger",
+      "freq": "Constant",
+      "force": "5",
+      "detail": "Height of 44-48\"Pushing buttons to count/clear parts"
+     },
+     {
+      "item": "Parts Cart/ parts box cart",
+      "freq": "Occasional",
+      "force": "50",
+      "detail": "Cart is pushed at height of 36\" up to 20 ft. at a time. Force depends on weight added to cart."
+     },
+     {
+      "item": "Parts under storage racks that are on mag liners or wheeled platforms.",
+      "freq": "Occasional",
+      "force": "50",
+      "detail": "Parts bins can be pulled out from under the rack so they can reach the materials."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson - Somerset KY- Parts Box.docx",
+   "conflicts": [
+    "driving: grid=occ detail=never -> kept occ",
+    "finemanip: grid=occ detail=const -> kept const"
+   ]
+  },
+  {
+   "id": "seed-bushing-press",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Bushing Press",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "Breaks and lunch",
+     "notes": "Employee has minimum of two 10 minute breaks and one 20 minute lunch break per shift. Additional breaks vary on shift length."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Performing various tasks throughout the workday at Bushings Press",
+     "notes": "Surface: ConcretePeriod of time: Can be up to 5-10 minutes at a time before walking about the area.Static: Employee will stand in one place while operating the bushing press. Can be up to 5-10 minutes at a time."
+    },
+    "walking": {
+     "freq": "freq",
+     "task": "Walking task to task",
+     "notes": "Surface: ConcretePeriod of time: Up to 2-3 minutes around the work area and in between job tasks. Greatest distance: up to 80 ft. to another area of WCTypical distance: 5 ft. - 10 ft."
+    },
+    "forwardbending": {
+     "freq": "freq",
+     "task": "Applying lube to bushings, placing beams into bushings press.",
+     "notes": "Due to the height of the press, the employee does not have the option to squat or kneel while running the press. With or without thoracic rotationWith UE horizontal reachHorizontal distance: up to 2 ft.With Weight: Up to 40lbs.Repetitive not sustainedPeriod of time: Up to a few seconds before changing postures."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces or boxes from floor. For cleanup.",
+     "notes": "*The worker has the option of forward bend or kneel in lieu of squatting.Full / Partial Repetitive not sustainedPeriod of time: Up to a few seconds before changing postures."
+    },
+    "kneeling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces or boxes from the floor. For cleanup.",
+     "notes": "*The worker has the option to squat or forward bend in lieu of kneeling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "crawling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces that fall or when cleaning.",
+     "notes": "*The worker has the option to squat or kneel lieu of crawling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Stairs for occasional meetings or ramps..",
+     "notes": "Greatest Distance:__6 inchesTypical Distance:_6 inchesSurface: Aluminum / Wood / Concrete"
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Bushings press operation. Lever and Bush Press buttonsPlacing beams into bush press",
+     "notes": "With or without thoracic rotation.With or without forward bend or lateral flexion; May include upper extremity reach with or without weight.Reach Range: Floor to 60\"Horizontal reach distance: up to 24\". Weight up to 40 lbs. loading into bush press at height of 35\"."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and climbing.",
+     "notes": "Critical for safety.Surface: Concrete"
+    },
+    "cervical": {
+     "freq": "freq",
+     "task": "All work tasks",
+     "notes": "Critical for safety while navigating walking/working surfaces.Full / Partial range of motion.Static or Repetitive"
+    },
+    "driving": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and kneeling.Single or both feet weight bearing",
+     "notes": "Critical for safetyR / L / Bilateral LE required"
+    },
+    "simplegrasp": {
+     "freq": "freq",
+     "task": "Handling small hand toolsBrush to lube bushings",
+     "notes": "R/ L / Bilateral UE requiredFlexion / Extension / Pronation / Supination / Deviation."
+    },
+    "firmgrasp": {
+     "freq": "freq",
+     "task": "Using hammerPushing/pulling roll cartsHandling bushing pieces Operating bushings press levers",
+     "notes": "R/ L / Bilateral UE requiredFlexion / Extension / Pronation / Supination / Deviation."
+    },
+    "finemanip": {
+     "freq": "freq",
+     "task": "Writing ordersOperating button panel",
+     "notes": "R/ L / Bilateral UE requiredDeviation"
+    },
+    "pinching": {
+     "freq": "occ",
+     "task": "Operating switch on machine, gripping papers",
+     "notes": "Pulp/Single tip, doubletip/chuck, tip pressing, thumbpressing, triggering, tip pinch,lateral/key grip-pinchR/ L / Bilateral UEWith Flexion/ Extension / Pronation / Supination / Deviation of the wrists."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Bushings",
+      "freq": "Frequent",
+      "force": "12",
+      "detail": "2 different bushings used, lifted from 12-48\" Out of the box."
+     },
+     {
+      "item": "Various Beams",
+      "freq": "Frequent",
+      "force": "86",
+      "detail": "Lifted from 10-48\". A hoist is available."
+     },
+     {
+      "item": "The sides on the metal baskets/ hand tools/ spray bottle with oil",
+      "freq": "Occasional",
+      "force": "10",
+      "detail": "When the metal baskets arrive at the area folded down, they have to be opened up. Lifting sides from 4\" to 20\". Oil for break chamber brackets."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Bushings",
+      "freq": "Frequent",
+      "force": "12",
+      "detail": "Carried from box to rollers, then to bushing press. Single hand carry acceptable. Less than 10' total."
+     },
+     {
+      "item": "Various Beams",
+      "freq": "Frequent",
+      "force": "86",
+      "detail": "Carried from conveyor/storage baskets to press machine and then to basket/flow rack for storage. Less than 20 feet total. Hoist is available."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Roll Cart with bushings or beams",
+      "freq": "Occasional",
+      "force": "50",
+      "detail": "Roll cart is pushed for placement of product as needed. Less than 5' at a time."
+     },
+     {
+      "item": "Control Panel / Buttons / Lever",
+      "freq": "Frequent",
+      "force": "5",
+      "detail": "Button to turn bushing oil rollers on. Fingers placed in scanner to operate press at 40\""
+     },
+     {
+      "item": "Overhead hoist/ Beams down the line",
+      "freq": "Frequent",
+      "force": "50",
+      "detail": "To move hoist or push beams down conveyor less than 20'. More frequently 30lbsF."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson- Somerset KY - Bushing Press.docx",
+   "conflicts": []
+  },
+  {
+   "id": "seed-friction-weld-operator",
+   "seed": true,
+   "info": {
+    "client": "Hendrickson",
+    "site": "Somerset, KY",
+    "jobTitle": "Friction Weld Operator",
+    "stationScope": "",
+    "date": "",
+    "consultant": ""
+   },
+   "movements": {
+    "sitting": {
+     "freq": "occ",
+     "task": "For breaks / lunch.",
+     "notes": "Employee has minimum of two 10 minute breaks and one 20 minute lunch break per shift. Additional breaks vary on shift length."
+    },
+    "standing": {
+     "freq": "const",
+     "task": "Working at workstation and control panels, writing, QC check on the tube, use of the scanner and using overhead hoist.",
+     "notes": "Keyboard = 38 inches.Writing workstation = 47 inches.Control panels = 55-68 inches."
+    },
+    "walking": {
+     "freq": "const",
+     "task": "While moving from task to task in work area.",
+     "notes": "Surface: Concrete, padding.Typical distance = 10 - 50 ft.Greatest distance = 100 ft."
+    },
+    "forwardbending": {
+     "freq": "freq",
+     "task": "Clearing debris from the tubes, removing parts from the bin, removing parts from the railing system to the stand, adding oil to the machine, and performing housekeeping duties.",
+     "notes": "Full / Partial / Sustained with mild thoracic rotation, lateral flexion and upper extremity reach, may be sustained for up to 10 seconds at one time.Straightening table = 44 inches for clearing debris from tube.Bin = 38 - 40 inches.Oil = 45 and 27 inches.Parts = 40 inches to as low as 16 inches.*The worker has the option to squat or kneel in lieu of forward bending for some activities."
+    },
+    "squatting": {
+     "freq": "occ",
+     "task": "Clearing debris from the tubes, removing parts from the bin, removing parts from the railing system to the stand, adding oil to the machine, and performing housekeeping duties.",
+     "notes": "Full / Partial.May be sustained for up to 10 seconds at one time.*The worker has the option to forward bend or kneel in lieu of squatting."
+    },
+    "kneeling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces or boxes from the floor. For cleanup.",
+     "notes": "*The worker has the option to squat or forward bend in lieu of kneeling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "crawling": {
+     "freq": "occ",
+     "task": "To pick up miscellaneous pieces that fall or when cleaning.",
+     "notes": "*The worker has the option to squat or kneel lieu of crawling.Single or Both KneesNo PPESurface: ConcretePeriod of time: Up to a few seconds before changing postures.Single knee"
+    },
+    "climbing": {
+     "freq": "occ",
+     "task": "Stairs for occasional meetings or ramps.",
+     "notes": "Greatest Distance:__6 inchesTypical Distance:_6 inchesSurface: Aluminum / Wood / Concrete"
+    },
+    "reaching": {
+     "freq": "const",
+     "task": "Operate controls / buttons / levers / switches, attaching / releasing overhead hoist hooks, clearing debris from the tubes, placing spindles on high rack, use of scanner, changing inserts and adding oil to the machine.",
+     "notes": "Reach Range: Floor to 72\"Horizontal Reach: Up to 36\"Scanner = 42 inches.Control panels and touch screen = 55 - 68 inches. Spindles placement on high rack = 60 inches.May have thoracic rotation and lateral flexion."
+    },
+    "balancing": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and climbing.",
+     "notes": "Surface = concrete, padding.Critical for safety."
+    },
+    "cervical": {
+     "freq": "const",
+     "task": "For observation / operation of process and performing visual QC checks.",
+     "notes": "Partial range of motion needed.May be sustained for 2 - 3 seconds at one time."
+    },
+    "driving": {
+     "freq": "never",
+     "task": "",
+     "notes": ""
+    },
+    "lowerext": {
+     "freq": "const",
+     "task": "For standing, walking, squatting, and climbing.",
+     "notes": "Bilateral lower extremity.Critical for safety."
+    },
+    "simplegrasp": {
+     "freq": "const",
+     "task": "Handling scanner, Hand tool use, mouse, moving metal gates to the tube stands.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "firmgrasp": {
+     "freq": "freq",
+     "task": "Handling tube for alignment, hoist remote, spindles, hooks of the hoist, container for oil.",
+     "notes": "Right Hand for straightening table button and scanner.May use bilateral upper extremity for some activities.May have deviation, pronation and supination with some activities."
+    },
+    "finemanip": {
+     "freq": "freq",
+     "task": "Pushing buttons on control panel, touch screen, writing, use of paint pen, finger sensors (bilateral) and use of calculator.",
+     "notes": "Dominant hand right or left.May use bilateral upper extremity for some activities."
+    },
+    "pinching": {
+     "freq": "const",
+     "task": "Use of remote for hoist and changing inserts.",
+     "notes": "Single tip, double tip, tip pressing, thumbpressing, tip pinch, lateral/key grip-pinchSustained for up to 10 seconds while using the remote. Dominant hand right or left. May use bilateral upper extremity for some activities."
+    }
+   },
+   "mh": {
+    "lift": [
+     {
+      "item": "Parts (Spindle)",
+      "freq": "Constant",
+      "force": "25",
+      "detail": "18 to 60 inches."
+     },
+     {
+      "item": "Axle",
+      "freq": "Constant",
+      "force": "100",
+      "detail": "6- 48 inches. Hoist Required."
+     },
+     {
+      "item": "Banding, bander, wooden sticks",
+      "freq": "Occasional",
+      "force": "10",
+      "detail": "6- 48 inches."
+     },
+     {
+      "item": "Oil container.",
+      "freq": "Occasional",
+      "force": "20",
+      "detail": "Floor to 48 inches."
+     }
+    ],
+    "carry": [
+     {
+      "item": "Parts (Spindle).",
+      "freq": "Constant",
+      "force": "25",
+      "detail": "2 handed carry required. Up to 2 feet"
+     },
+     {
+      "item": "Banding, bander, wooden sticks",
+      "freq": "Occasional",
+      "force": "10",
+      "detail": "Single handed carry acceptable. Up to 20 feet."
+     },
+     {
+      "item": "Oil container.",
+      "freq": "Occasional",
+      "force": "10",
+      "detail": "2 handed carry required for full oil container. Up to 100 feet when going to refill container."
+     }
+    ],
+    "pushpull": [
+     {
+      "item": "Guiding tube or axles while using the overhead hoist.",
+      "freq": "Constant",
+      "force": "50",
+      "detail": "5 - 10 feet. More frequently 30lbsF."
+     },
+     {
+      "item": "Handle on Straightening press",
+      "freq": "Constant",
+      "force": "15",
+      "detail": "Less than 12 inches."
+     }
+    ]
+   },
+   "source": "FTA Hendrickson- Somerset KY - Friction Weld Operator.docx",
+   "conflicts": []
+  }
+ ],
+ "stations": [
+  {
+   "id": "seedjsa-beam-weld-operator",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Beam Weld Operator",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Working at welding machine, welding workstation, and using overhead hoist remote / robot remote",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces or boxes from the floor",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces that fall or when cleaning",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Stairs for occasional meetings or ramps",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling of welding gun, hand tools, QC tools, and small parts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Pushing buttons on the control panels and remote for robot, writing for inventory log and use of paint pen",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of QC tools, remote for hoist/robot, holding papers, and handling of stamp tool",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-beam-weld-operator"
+  },
+  {
+   "id": "seedjsa-finisher-operator",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Finisher Operator",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Working at QC workstation, control panels and using overhead hoist remote",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Performing QC checks, latching / unlatching the hooks of the overhead hoist and performing housekeeping duties",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Platform to the machine",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of hand tools, QC measurement tools, air gun",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling air gun, small hand tools, QC measurement tools, and hoist remote",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Pushing buttons on control panel, touch screen, writing, and use of calculator",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of remote for hoist, QC measurement tools, small hand tools, and changing inserts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-finisher-operator"
+  },
+  {
+   "id": "seedjsa-material-handler",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Material Handler",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Operation of fork truck",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Operation of reach truck, working at control panel of auto wrapper and using battery exchange unit",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Banding and wrapping supplies, performing inventory count and performing housekeeping duties",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Fork or Reach truck",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Stairs for meetings or using ramps",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling controls of fork / reach truck and plastic wrap",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling controls of fork / reach truck, propane cylinder, battery exchange unit, radio and RF scanner",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of radio, paperwork, and handling plastic wrap",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-material-handler"
+  },
+  {
+   "id": "seedjsa-press-operator",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Press Operator",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Placing axle on the lowest rack of the maroon racking system",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Machine platform",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of QC measurement tools, rag, Mo caps, levers and buttons",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling parts, pushing buttons, use of QC measurement tools, and spray cleaner can",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of QC measurement tools and remote for hoist",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-press-operator"
+  },
+  {
+   "id": "seedjsa-station-30-paint-booth",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Station 30 - Paint Booth",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Operation of the painting process",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Painting axle unit, covering axle with masking tape and performing housekeeping duties",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Stairs into paint booth",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling paint gun and masking tape",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of paint gun and masking tape",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Pushing buttons on control panel to stop the line for cleaning and writing on log forms",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling masking tape",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-station-30-paint-booth"
+  },
+  {
+   "id": "seedjsa-tube-heat-treat-operator",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Tube Heat Treat Operator",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Working at workstation and control panels and using overhead crane remote",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Hook / unhooking the straps of the overhead crane and performing housekeeping duties",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Hook / unhooking the straps of the overhead crane",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Fork Truck",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Hand tool use, mouse, moving metal gates to the tube stands",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling container for fluids, crane remote, air hose, snips to cut metal banding and moving tubes",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of remote for crane, metal sample test (Almen strips), using screw driver, and changing inserts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-tube-heat-treat-operator"
+  },
+  {
+   "id": "seedjsa-wrap-weld-operator",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Wrap Weld Operator",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Operate controls / buttons / levers / switches, latching / unlatching the overhead hoist hooks, welding",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling QC tools and small hand tools, moving axle with hoist, and moving the control lever",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling wraps, hoist remote, welding gun, and pliers to clean the robot",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Pushing buttons on control panel and touch screen, and writing",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling of paper and filler weld material, use of remote for hoist, and use of small hand tools",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-wrap-weld-operator"
+  },
+  {
+   "id": "seedjsa-kitting",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Kitting",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Breaks and lunch",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Performing various tasks throughout the workday such:Preparing bags and boxes with miscellaneous small parts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Walking task to task Retrieving miscellaneous pieces",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Carrying miscellaneous boxes",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces that fall or when cleaning",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Stairs for occasional meetings or ramps",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Retrieving miscellaneous small parts, loading boxes onto skids",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Looking for small parts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Utilizing small hand tools",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Picking up small nuts & bolts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Moving boxes",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Writing",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Small hand tools",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-kitting"
+  },
+  {
+   "id": "seedjsa-parts-box",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Parts Box",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Breaks and lunch",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Performing various tasks throughout the workday such:Preparing bags and boxes with miscellaneous small parts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Walking task to task Retrieving miscellaneous pieces",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Carrying miscellaneous boxes",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Retrieving miscellaneous small parts, loading bags into boxes, loading boxed material onto pallets",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces that fall or when cleaning",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Stairs for occasional meetings or ramps",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Retrieving miscellaneous small parts, loading boxes onto skids",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Looking for small parts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Utilizing small hand tools",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Picking up small nuts & bolts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Moving boxes",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Writing",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Small hand tools",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-parts-box"
+  },
+  {
+   "id": "seedjsa-bushing-press",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Bushing Press",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "Breaks and lunch",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Performing various tasks throughout the workday at Bushings Press",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Walking task to task",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Applying lube to bushings, placing beams into bushings press",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces or boxes from floor",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces or boxes from the floor",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces that fall or when cleaning",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Stairs for occasional meetings or ramps",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Bushings press operation",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Lever and Bush Press buttons",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Placing beams into bush press",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling small hand tools",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Brush to lube bushings",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Using hammer",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-bushing-press"
+  },
+  {
+   "id": "seedjsa-friction-weld-operator",
+   "seed": true,
+   "derived": true,
+   "head": {
+    "workstation": "Friction Weld Operator",
+    "department": "",
+    "site": "Somerset, KY",
+    "obsDates": "",
+    "lead": "",
+    "team": "",
+    "reviewedBy": "",
+    "ppe": ""
+   },
+   "tasks": [
+    {
+     "name": "While moving from task to task in work area",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces or boxes from the floor",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "To pick up miscellaneous pieces that fall or when cleaning",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Stairs for occasional meetings or ramps",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling scanner, Hand tool use, mouse, moving metal gates to the tube stands",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Handling tube for alignment, hoist remote, spindles, hooks of the hoist, container for oil",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    },
+    {
+     "name": "Use of remote for hoist and changing inserts",
+     "hazards": [],
+     "reduction": "",
+     "actions": []
+    }
+   ],
+   "fromJob": "seed-friction-weld-operator"
+  }
+ ]
+}

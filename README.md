@@ -21,6 +21,7 @@ Mobile-first ATI Human Movement Assessment MVP for on-site use. The app captures
   /config_manual
   /data/manual
   /web_manual
+/HMA-Overlay
 Dockerfile
 docker-compose.yml
 ```
@@ -35,6 +36,28 @@ separate data under `HMA-Manual/data/manual`.
 The manual app does not call the original movement-recognition pipeline. Review
 videos are temporary files for provider review only. See
 [`HMA-Manual/README.md`](HMA-Manual/README.md) for startup and deployment notes.
+
+## HMA-Overlay Sister Tool
+
+HMA-Overlay is isolated under [`HMA-Overlay/`](HMA-Overlay/) and shares nothing with
+the API or database. It is a single self-contained `HMA Overlay.html` that is opened
+directly in a browser -- no build, no server, no network.
+
+It answers the question that sits after scoring: given an employee's HMA results and
+the physical demands of their job (FTA/PDA) plus the task steps of their station (JSA),
+**which parts of that job put that specific person at risk, and why.** The job and
+station library is baked into the HTML file itself, so only employee records are
+brought in per use.
+
+It consumes the same record shape this repo already produces --
+`HMA-Manual/web_manual/src/lib/trackerExport.ts` output drops straight in, as does the
+Corrective Exercise Tracker's export.
+
+> **Admin-facing only.** Output pairs a named individual's physical limitations with a
+> specific job, which is ADA-sensitive. It is intervention targeting -- which correctives
+> to weight, which coaching to reinforce, which station change to pursue -- and explicitly
+> **not** a fitness-for-duty determination, work restriction, or placement input. Nothing
+> in it is shown to the employee. See [`HMA-Overlay/README.md`](HMA-Overlay/README.md).
 
 ## Local Developer Workflow
 

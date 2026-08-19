@@ -1,0 +1,56 @@
+[
+  {
+    "id": "demo-hma-1", "fname": "Marcus", "lname": "Bell", "name": "Marcus Bell",
+    "company": "Demo Manufacturing", "dept": "Fabrication", "shift": "1",
+    "date": "2026-08-04", "location": "Demo Plant", "type": "Initial",
+    "scores": {
+      "lunge":    [{"val":3,"pain":false},{"val":1,"pain":false}],
+      "sld":      [{"val":2,"pain":false},{"val":2,"pain":false}],
+      "shoulder": [{"val":1,"pain":false},{"val":3,"pain":false}],
+      "trunk":    [{"val":0,"pain":true},{"val":2,"pain":false}],
+      "cervical": [{"val":3,"pain":false},{"val":3,"pain":false}]
+    },
+    "total": 7,
+    "hypermobile": {"lunge":false,"sld":true,"shoulder":false,"trunk":false,"cervical":false},
+    "hasOA": true, "notes": "Fictional demo record.",
+    "followup": "2026-09-04", "retest": "2026-11-04", "plan": "No", "pa": "Yes",
+    "observations": {"lunge":{},"sld":{},"shoulder":{},"trunk":{},"cervical":{}},
+    "qualityFocus": {"lunge":["flexibility"],"sld":["dynamic stabilization"],"shoulder":["strength","mobility"],"trunk":[],"cervical":[]}
+  },
+  {
+    "id": "demo-hma-2", "fname": "Dana", "lname": "Whitfield", "name": "Dana Whitfield",
+    "company": "Demo Manufacturing", "dept": "Shipping", "shift": "2",
+    "date": "2026-08-06", "location": "Demo Plant", "type": "Initial",
+    "scores": {
+      "lunge":    [{"val":3,"pain":false},{"val":3,"pain":false}],
+      "sld":      [{"val":3,"pain":false},{"val":2,"pain":false}],
+      "shoulder": [{"val":2,"pain":false},{"val":2,"pain":false}],
+      "trunk":    [{"val":3,"pain":false},{"val":3,"pain":false}],
+      "cervical": [{"val":2,"pain":false},{"val":3,"pain":false}]
+    },
+    "total": 12,
+    "hypermobile": {"lunge":false,"sld":false,"shoulder":false,"trunk":false,"cervical":false},
+    "hasOA": false, "notes": "Fictional demo record.",
+    "followup": "2026-09-06", "retest": "2027-02-06", "plan": "No", "pa": "No",
+    "observations": {"lunge":{},"sld":{},"shoulder":{},"trunk":{},"cervical":{}},
+    "qualityFocus": {"lunge":[],"sld":[],"shoulder":["mobility"],"trunk":[],"cervical":["flexibility"]}
+  },
+  {
+    "id": "demo-hma-3", "fname": "Ray", "lname": "Ortiz", "name": "Ray Ortiz",
+    "company": "Demo Manufacturing", "dept": "Shipping", "shift": "1",
+    "date": "2026-08-11", "location": "Demo Plant", "type": "Re-test",
+    "scores": {
+      "lunge":    [{"val":1,"pain":false},{"val":1,"pain":false}],
+      "sld":      [{"val":1,"pain":false},{"val":2,"pain":false}],
+      "shoulder": [{"val":2,"pain":false},{"val":1,"pain":false}],
+      "trunk":    [{"val":2,"pain":false},{"val":2,"pain":false}],
+      "cervical": [{"val":3,"pain":false},{"val":2,"pain":false}]
+    },
+    "total": 7,
+    "hypermobile": {"lunge":false,"sld":false,"shoulder":true,"trunk":false,"cervical":false},
+    "hasOA": false, "notes": "Fictional demo record.",
+    "followup": "2026-09-11", "retest": "2026-11-11", "plan": "Yes", "pa": "No",
+    "observations": {"lunge":{},"sld":{},"shoulder":{},"trunk":{},"cervical":{}},
+    "qualityFocus": {"lunge":["flexibility","mobility"],"sld":["static stabilization"],"shoulder":["dynamic stabilization"],"trunk":[],"cervical":[]}
+  }
+]
