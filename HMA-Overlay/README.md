@@ -206,11 +206,23 @@ tool without real records — paste its contents into the Receive box.
 ## Where it sits
 
 ```
-HMA Grand Master/
-├── HMA-Tracker-app/    assess movement → build corrective plan   (EIS authoring)
-├── HMA-Cadence/        employee-facing compliance PWA            (employee)
-└── HMA-Overlay/        person × job demand match                 (admin)  ← this
+HMA-Assessment-Suite/          (git: Dane-Lee/HMA-Assessment-Suite)
+├── api/  web/  config/        video-capture HMA MVP + FastAPI backend
+├── HMA-Manual/                manual-scoring sister app
+├── HMA-Overlay/               person × job demand match      (admin)  ← this
+├── HMA-Tracker-app/           assess movement → corrective plan (EIS authoring)
+│                              own repo: Dane-Lee/HMA-Correct-Exercise-Tracker
+└── HMA-Cadence/               employee-facing compliance PWA (employee)
+                               own repo: Dane-Lee/HMA-Cadence
 ```
+
+Tracker and Cadence are **nested repos**, not part of this one — each keeps its own
+GitHub remote and history, and the Tracker deploys to Vercel on push to its own repo.
+They sit here so the whole HMA estate opens as a single folder; commit and push them
+from inside their own directories. The suite `.gitignore` excludes both.
+
+`HMA-Manual/web_manual/src/lib/trackerExport.ts` emits the same record shape this tool
+ingests, so manual-app exports drop in unchanged.
 
 The Tracker gained one button — **→ Send to Overlay**, next to Export on the Records tab. It
 reuses the Tracker's existing clipboard helper; nothing else in that app changed. It is a local

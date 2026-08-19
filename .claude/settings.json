@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f .env .env.example src/lib/data/adapters/supabase.js)",
+      "Bash(rm -rf supabase)",
+      "Bash(npm uninstall *)",
+      "Bash(npx vitest *)",
+      "Bash(sort -u -t: -k2)",
+      "Bash(xargs wc -l)",
+      "Bash(node -e \"const d=require\\('./docs/sample-plan-payload.json'\\);const s=JSON.stringify\\(d\\);console.log\\(s.length\\);const z=require\\('zlib'\\).deflateRawSync\\(Buffer.from\\(s\\)\\);console.log\\('deflated:',z.length\\);console.log\\('base64 of deflated:',z.toString\\('base64'\\).length\\);console.log\\('exercises:',\\(d.exercises||d.assignments||[]\\).length\\)\")",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "WebFetch(domain:github.com)",
+      "Bash(node -e \"console.log\\(process.version, typeof crypto?.subtle, typeof CompressionStream, typeof indexedDB\\)\")",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).devDependencies\\)\")",
+      "Bash(grep -nE \"^\\\\s*\\(export|//|\\\\*|[a-zA-Z_]+\\\\s*\\\\\\(\\)\" src/lib/data/contract.js)",
+      "Bash(node gen.mjs)",
+      "Read(//c/Users/dane.lee/Alternate Desktop/Dane - Coding Projects/**)"
+    ]
+  }
+}

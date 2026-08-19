@@ -37,3 +37,11 @@ pytest-cache-files*/
 .manual-test-data/
 HMA-Manual/.manual-pytest*/
 HMA-Manual/.manual-test-data/
+
+# Sibling HMA apps kept as nested repos, each with its own GitHub remote:
+#   HMA-Tracker-app -> Dane-Lee/HMA-Correct-Exercise-Tracker (deploys to Vercel on push)
+#   HMA-Cadence     -> Dane-Lee/HMA-Cadence
+# They live here so the whole HMA estate opens as one folder, but they are
+# committed and pushed from inside their own directories, not from this repo.
+/HMA-Tracker-app/
+/HMA-Cadence/
