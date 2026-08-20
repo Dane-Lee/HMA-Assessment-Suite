@@ -5,8 +5,18 @@ Source of truth for the AI roadmap is [docs/self-guided-assessment/phase-plan.md
 
 Last reviewed: 2026-07-31
 
-**Branch state:** `hma-manual-ui-polish` (Manual app) and `rotation-accuracy` (AI scoring) are both
-merged into `main` — work off `main` unless a task says otherwise.
+**Branch state:** `hma-manual-ui-polish` (Manual app) and `rotation-accuracy` (AI scoring) are merged
+into `main`. Current work is on **`hma-manual-tracker-feed-v2`**, which carries two independent
+strands and is **not yet merged to `main`**:
+- `45ba3a5` — Manual app: optional employee details feeding the Tracker export.
+- `c59c52f` — AI app: scoring/upload/session hardening (F7a/F7b, F14a, F16, 11a).
+
+**Second repo:** the Corrective Exercise Tracker is a *separate* repo, cloned to
+`ATI/HMA-Correct-Exercise-Tracker`, branch **`tracker-merge-on-reimport`** (`a2f3fcf`). It holds the
+other half of Tracker feed v2 and must be merged there, not here.
+
+**Green as of 2026-07-31:** 82 `api/tests`, 5 `api_manual/tests`, 11 `web_manual` vitest,
+Tracker `npm test`. TypeScript clean.
 
 ---
 
@@ -15,7 +25,16 @@ merged into `main` — work off `main` unless a task says otherwise.
 ### ✅ Done
 - **Phase 1 — Identity, magic links, role separation.** Employee/magic-link/session tables,
   `auth_tokens`, provider + self-session routes, role-aware middleware, and the self-flow frontend.
-- **Phase 2 (capture mechanics)** — recorder, quality gate, mobile capture, provider pose overlays.
+- **Phase 2 (capture mechanics, partial)** — recorder, quality telemetry, mobile capture, and
+  provider pose overlays. The score-acceptance quality gate remains open below.
+- **Commercial hardening — 2026-07-31:**
+  - [x] **F7a/F7b:** structured pose-failure diagnostics; production now fails closed to
+        unscoreable/provider-review state. Deterministic fallback requires explicit test/dev opt-in.
+  - [x] **F14a:** request-body and exact file-byte upload limits are enforced while streaming;
+        partial/invalid uploads are cleaned up.
+  - [x] **F16:** per-client throttling on provider PIN and employee magic-link session creation.
+  - [x] **11a:** automated failure-path harness for unavailable pose services, valid/corrupt media,
+        oversized/empty/unsupported uploads, migration safety, throttling, and UI review handling.
 
 ### 🔲 Phase 0 — Groundwork (blocking; long lead time)
 - [ ] Shoot the **demo videos** (5 looping clips, both sides) and drop into `web/public/`.
@@ -24,8 +43,8 @@ merged into `main` — work off `main` unless a task says otherwise.
       `camera_setup_self`, `common_mistakes`, `recording_seconds_min/max`).
 - [ ] **Legal / consent review**; add the `employer_distribution_acknowledged` consent flag.
 - [ ] Confirm **HIPAA scope** for self-administered + employer-distributed flow.
-- [ ] Confirm **MediaPipe is the production scoring path**, not the deterministic fallback
-      (`README.md`). The quality gate is meaningless without it.
+- [ ] Verify **MediaPipe + OpenCV in the production runtime**. Production fallback scoring is now
+      disabled by default; an unavailable pose service produces an unscoreable/provider-review clip.
 - [ ] **Rotation-accuracy validation** — Tier-1 synthetic analysis DONE
       ([docs/self-guided-assessment/rotation-accuracy-findings.md](docs/self-guided-assessment/rotation-accuracy-findings.md)):
       trunk gate rides on uncalibrated z-scale + a `max()` inflation bug; cervical metric is blind to
@@ -40,6 +59,16 @@ merged into `main` — work off `main` unless a task says otherwise.
 - [ ] Personal **mobile camera-prop reality test** for all 5 movements to calibrate coaching copy.
 
 ### 🔲 Phase 2 — Remaining
+- [ ] **Finding 8 — score-acceptance quality gate (NEXT):** define and enforce the minimum usable
+      detection rate, required-landmark visibility, duration/framing, and retake-versus-review rules.
+- [ ] **Finding 10 — server-authoritative provenance:** finalize from server-owned capture records;
+      do not accept client-authored app scores, metrics, source, or quality as authoritative evidence.
+- [ ] **Findings 1/5 — employee ownership + link semantics:** bind assessments to employees and
+      make issued links resolve only the intended employee/assessment lifecycle.
+- [ ] **Finding 12 — scoped mobile authorization:** replace provider-wide mobile privileges with
+      assessment-scoped participant credentials.
+- [ ] **Findings 2/15 — lifecycle + incomplete semantics:** represent draft/submitted/returned/
+      reviewed states and incomplete or unscoreable movements without misleading totals.
 - [ ] Wire demo videos + content schema into the per-movement screens.
 - [ ] Replace **scoring placeholders** with real logic — `excessive_effort_placeholder`,
       `finger_walking_placeholder` in `api/app/services/scoring/movements/`.
@@ -94,8 +123,20 @@ Provider-scored, no AI. Full scoring workflow + Corrective Exercise Tracker feed
 - [ ] Apply the owner's **UX notes** collected while testing the Manual app.
 - [ ] (Optional) Add the same **live recorder to the employee upload page** (today it uses a native
       `capture="environment"` file input).
-- [ ] **Tracker feed v2**: import only ADDS by `id` (no update-on-re-score); no shared employee
-      identity yet (company from employer if linked else blank; name split on first space).
+- [x] **Tracker feed v2** (2026-07-31) — both halves done:
+  - Manual side: optional **Employee Details** section on New Assessment (first/last name, company,
+    department, shift, location), collapsed by default so anonymous scoring stays one field. Stored
+    as additive columns, carried into the export. Name fallback now splits on the LAST space and
+    understands "Last, First".
+  - Tracker side (separate repo `Dane-Lee/HMA-Correct-Exercise-Tracker`, branch
+    `tracker-merge-on-reimport`, pushed): re-importing an id you already hold now **updates**
+    it instead of skipping. Scores/pain/hypermobility/OA/details refresh; **exercise plan,
+    observations, quality focus, follow-up and re-test dates are preserved**. Notes refresh only
+    while they are unedited since the last import. `npm test` covers the rules.
+- [ ] **Verify Tracker feed v2 end-to-end (NEXT — nothing has been clicked through yet).** Score an
+      assessment → Export for Tracker → import into the Tracker → build an exercise program →
+      go back and change a score in the Manual app → export and import again. Confirm the scores
+      update *and* the exercise program survives. Only merge either branch after this passes.
 
 ### 🔲 Deployment / hardening (before public use)
 - [ ] Run HMA + HMA-Manual behind a **reverse proxy** with separate hostnames + HTTPS termination

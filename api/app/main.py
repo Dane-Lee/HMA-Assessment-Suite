@@ -10,7 +10,9 @@ from fastapi.staticfiles import StaticFiles
 
 from .database import initialize_database
 from .middleware.pin_auth import PinAuthMiddleware
+from .middleware.upload_limit import UploadSizeLimitMiddleware
 from .repository import AssessmentRepository
+from .rate_limit import SlidingWindowRateLimiter
 from .routes.assessments import router as assessments_router
 from .routes.auth import router as auth_router
 from .routes.provider import router as provider_router
@@ -40,12 +42,17 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         allow_headers=["*"],
     )
     app.add_middleware(PinAuthMiddleware)
+    app.add_middleware(
+        UploadSizeLimitMiddleware,
+        max_upload_bytes=settings.max_upload_bytes,
+    )
 
     repository = AssessmentRepository(settings.db_path)
     scoring_service = ScoringService(
         settings.thresholds_path,
         enable_pose_overlays=settings.enable_pose_overlays,
         max_pose_trace_frames=settings.max_pose_trace_frames,
+        allow_fallback_scoring=settings.allow_fallback_scoring,
     )
     scoring_service.apply_threshold_overrides(repository.get_active_threshold_overrides())
 
@@ -54,6 +61,10 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         repository=repository,
         catalog=MovementCatalog(settings.movements_config_path),
         scoring_service=scoring_service,
+        session_write_limiter=SlidingWindowRateLimiter(
+            limit=settings.session_write_limit,
+            window_seconds=settings.session_write_window_seconds,
+        ),
     )
     app.state.runtime = runtime
     app.include_router(auth_router)

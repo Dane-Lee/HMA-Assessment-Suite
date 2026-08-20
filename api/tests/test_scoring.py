@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
+import pytest
+
+import api.app.services.scoring.extractors as extractor_module
 from api.app.services.scoring.extractors import (
     FramePose,
     HybridFeatureExtractor,
@@ -9,7 +13,7 @@ from api.app.services.scoring.extractors import (
     _robust_span,
     _smooth_series,
 )
-from api.app.services.scoring.service import ScoringService
+from api.app.services.scoring.service import ScoringService, UnscoreableCaptureError
 from api.app.services.scoring.types import VideoContext
 
 
@@ -99,9 +103,98 @@ def test_smooth_series_rejects_single_frame_spike():
     assert _robust_span([0.5, 0.5, 0.9, 0.5, 0.1, 0.5]) < (0.9 - 0.1)
 
 
+def test_pose_extraction_failure_is_logged_and_identified(tmp_path: Path, monkeypatch, caplog):
+    video_path = tmp_path / "capture.webm"
+    video_path.write_bytes(b"video-data")
+    extractor = HybridFeatureExtractor(enable_pose_overlays=False)
+
+    monkeypatch.setattr(extractor_module, "cv2", object())
+    monkeypatch.setattr(extractor_module, "mp", object())
+    monkeypatch.setattr(extractor_module, "np", object())
+    monkeypatch.setattr(
+        extractor,
+        "_build_context",
+        lambda path, movement_key, side: VideoContext(
+            path=path,
+            side=side,
+            movement_key=movement_key,
+            file_size_bytes=path.stat().st_size,
+            duration_seconds=1.25,
+            frame_count=0,
+            fps=0.0,
+            width=0,
+            height=0,
+        ),
+    )
+
+    def fail_pose_extraction(_context):
+        raise RuntimeError("forced pose failure")
+
+    monkeypatch.setattr(extractor, "_extract_with_mediapipe", fail_pose_extraction)
+
+    with caplog.at_level(logging.ERROR, logger=extractor_module.__name__):
+        result = extractor.extract(video_path, "trunk_rotation", "left")
+
+    assert result.source == "fallback"
+    assert "pose_extraction_failed" in result.quality.warnings
+    assert "POSE_EXTRACTION_FAILED" in caplog.text
+    assert "movement=trunk_rotation" in caplog.text
+    assert "side=left" in caplog.text
+    assert "forced pose failure" in caplog.text
+    assert video_path.name not in caplog.text
+
+
+def test_missing_pose_dependencies_are_logged_and_identified(tmp_path: Path, monkeypatch, caplog):
+    video_path = tmp_path / "capture.webm"
+    video_path.write_bytes(b"video-data")
+    extractor = HybridFeatureExtractor(enable_pose_overlays=False)
+
+    monkeypatch.setattr(extractor_module, "cv2", None)
+    monkeypatch.setattr(extractor_module, "mp", None)
+    monkeypatch.setattr(extractor_module, "np", None)
+
+    with caplog.at_level(logging.WARNING, logger=extractor_module.__name__):
+        result = extractor.extract(video_path, "cervical_rotation", "right")
+
+    assert result.source == "fallback"
+    assert "pose_dependencies_unavailable" in result.quality.warnings
+    assert "POSE_DEPENDENCIES_UNAVAILABLE" in caplog.text
+    assert "movement=cervical_rotation" in caplog.text
+    assert "side=right" in caplog.text
+    assert video_path.name not in caplog.text
+
+
+def test_valid_video_container_still_becomes_unscoreable_without_pose_service(
+    tmp_path: Path, monkeypatch
+):
+    if extractor_module.cv2 is None or extractor_module.np is None:
+        pytest.skip("OpenCV and NumPy are required for the valid-container fixture")
+    video_path = tmp_path / "valid-capture.avi"
+    writer = extractor_module.cv2.VideoWriter(
+        str(video_path),
+        extractor_module.cv2.VideoWriter_fourcc(*"MJPG"),
+        10.0,
+        (64, 64),
+    )
+    assert writer.isOpened()
+    for _ in range(10):
+        writer.write(extractor_module.np.zeros((64, 64, 3), dtype=extractor_module.np.uint8))
+    writer.release()
+    monkeypatch.setattr(extractor_module, "mp", None)
+    service = ScoringService(
+        Path(__file__).resolve().parents[2] / "config" / "scoring_thresholds.yaml"
+    )
+
+    with pytest.raises(UnscoreableCaptureError) as raised:
+        service.analyze_capture("trunk_rotation", "left", video_path)
+    assert raised.value.quality.width == 64
+    assert raised.value.quality.height == 64
+    assert "pose_dependencies_unavailable" in raised.value.quality.warnings
+
+
 def test_cervical_rotation_good_fixture_scores_higher(tmp_path: Path):
     thresholds_path = Path(__file__).resolve().parents[2] / "config" / "scoring_thresholds.yaml"
-    service = ScoringService(thresholds_path)
+    service = ScoringService(thresholds_path, allow_fallback_scoring=True)
 
     good_path = tmp_path / "good-cervical.webm"
     poor_path = tmp_path / "poor-cervical.webm"

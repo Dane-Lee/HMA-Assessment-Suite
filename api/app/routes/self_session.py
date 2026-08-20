@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Request, Response, status
 from pydantic import BaseModel
 
 from ..auth_tokens import generate_token
+from .auth import _enforce_session_write_limit
 
 router = APIRouter(prefix="/api/self", tags=["self"])
 
@@ -31,6 +32,7 @@ def _employee_payload(employee: dict) -> dict:
 
 @router.post("/session")
 def consume_link(payload: ConsumeMagicLinkRequest, request: Request, response: Response):
+    _enforce_session_write_limit(request, "employee-session")
     runtime = request.app.state.runtime
     now = _now_utc()
     now_iso = now.isoformat()

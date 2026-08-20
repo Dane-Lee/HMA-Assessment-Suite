@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS employees (
 CREATE TABLE IF NOT EXISTS manual_assessments (
     id TEXT PRIMARY KEY,
     participant_name TEXT NOT NULL,
+    first_name TEXT NOT NULL DEFAULT '',
+    last_name TEXT NOT NULL DEFAULT '',
+    company TEXT NOT NULL DEFAULT '',
+    department TEXT NOT NULL DEFAULT '',
+    shift TEXT NOT NULL DEFAULT '',
+    work_location TEXT NOT NULL DEFAULT '',
     employee_id TEXT,
     created_by_provider_id TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'draft',
@@ -145,6 +151,14 @@ ON audit_events (assessment_id, created_at);
 _ADDED_COLUMNS: dict[str, dict[str, str]] = {
     "manual_assessments": {
         "has_oa": "INTEGER NOT NULL DEFAULT 0",
+        # Optional identity details. Blank unless the provider fills them in;
+        # they populate the Corrective Exercise Tracker's employee fields.
+        "first_name": "TEXT NOT NULL DEFAULT ''",
+        "last_name": "TEXT NOT NULL DEFAULT ''",
+        "company": "TEXT NOT NULL DEFAULT ''",
+        "department": "TEXT NOT NULL DEFAULT ''",
+        "shift": "TEXT NOT NULL DEFAULT ''",
+        "work_location": "TEXT NOT NULL DEFAULT ''",
     },
     "manual_movement_results": {
         "hypermobile": "INTEGER NOT NULL DEFAULT 0",

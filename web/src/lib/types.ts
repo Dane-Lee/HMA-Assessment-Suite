@@ -20,7 +20,7 @@ export type MovementDefinition = {
 export type CaptureResult = {
   movement_key: string;
   side: Side;
-  score: number;
+  score: number | null;
   detected_faults: string[];
   confidence: number;
   metrics: Record<string, number>;

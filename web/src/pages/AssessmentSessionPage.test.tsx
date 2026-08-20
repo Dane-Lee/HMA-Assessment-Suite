@@ -192,6 +192,32 @@ describe("AssessmentSessionPage", () => {
     expect(screen.getByText("Complete a manual score or analyzed capture for each side before saving this movement.")).toBeInTheDocument();
   });
 
+  it("opens provider scoring when automated analysis is unavailable", async () => {
+    apiMocks.uploadCapture.mockRejectedValueOnce(
+      Object.assign(new Error("Automated pose analysis was unavailable. Enter a provider score or retake the clip."), {
+        code: "capture_unscoreable"
+      })
+    );
+    render(
+      <MemoryRouter initialEntries={["/assessments/assessment-1"]}>
+        <Routes>
+          <Route path="/assessments/:assessmentId" element={<AssessmentSessionPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await screen.findByRole("heading", { name: "Cervical Rotation" });
+    const testFile = new File(["video"], "capture.webm", { type: "video/webm" });
+    const rightSection = screen.getByText("Right-side capture").closest("section");
+    fireEvent.change(screen.getByLabelText(/right upload fallback/i), {
+      target: { files: [testFile] }
+    });
+    fireEvent.click(within(rightSection as HTMLElement).getByRole("button", { name: /analyze capture/i }));
+
+    expect(await screen.findByText(/automated pose analysis was unavailable/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /use app score instead/i })).toBeInTheDocument();
+  });
+
   it("loads mobile draft captures and finalizes them", async () => {
     apiMocks.listDraftCaptures.mockResolvedValue([
       {

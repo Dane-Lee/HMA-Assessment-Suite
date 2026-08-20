@@ -92,6 +92,51 @@ describe("buildTrackerRecord", () => {
     expect(record.id).toBe("assessment-123");
   });
 
+  it("prefers the provider's explicit employee details over anything derived", () => {
+    const record = buildTrackerRecord(
+      assessment({
+        participant_name: "EMP-4471",
+        first_name: "Casey",
+        last_name: "Jones",
+        company: "Navarre",
+        department: "Weld",
+        shift: "2nd",
+        work_location: "Line 3"
+      })
+    );
+    expect(record.fname).toBe("Casey");
+    expect(record.lname).toBe("Jones");
+    expect(record.name).toBe("Casey Jones");
+    // explicit company wins over the linked employee's employer
+    expect(record.company).toBe("Navarre");
+    expect(record.dept).toBe("Weld");
+    expect(record.shift).toBe("2nd");
+    expect(record.location).toBe("Line 3");
+  });
+
+  it("splits a fallback name on the LAST space so multi-word first names survive", () => {
+    expect(buildTrackerRecord(assessment({ participant_name: "Mary Jo Smith" }))).toMatchObject({
+      fname: "Mary Jo",
+      lname: "Smith"
+    });
+  });
+
+  it("reads a fallback name written as 'Last, First'", () => {
+    expect(buildTrackerRecord(assessment({ participant_name: "Smith, John" }))).toMatchObject({
+      fname: "John",
+      lname: "Smith",
+      name: "John Smith"
+    });
+  });
+
+  it("keeps a bare ID as the name when there is nothing to split", () => {
+    const record = buildTrackerRecord(assessment({ participant_name: "EMP-4471", employee_employer: null }));
+    expect(record.fname).toBe("EMP-4471");
+    expect(record.lname).toBe("");
+    expect(record.name).toBe("EMP-4471");
+    expect(record.company).toBe("");
+  });
+
   it("exports an array (the Tracker import shape) with all five movement keys", () => {
     const out = buildTrackerExport(assessment());
     expect(Array.isArray(out)).toBe(true);

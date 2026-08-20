@@ -86,3 +86,19 @@ def test_employee_session_uses_configured_lifetime(tmp_path: Path):
 
     cookie_header = response.headers.get("set-cookie", "")
     assert "Max-Age=3600" in cookie_header
+
+
+def test_employee_session_writes_are_rate_limited(tmp_path: Path):
+    settings = replace(
+        build_settings(tmp_path),
+        session_write_limit=2,
+        session_write_window_seconds=60,
+    )
+    client = TestClient(create_app(settings))
+
+    assert client.post("/api/self/session", json={"token": "invalid-1"}).status_code == 401
+    assert client.post("/api/self/session", json={"token": "invalid-2"}).status_code == 401
+    limited = client.post("/api/self/session", json={"token": "invalid-3"})
+
+    assert limited.status_code == 429
+    assert int(limited.headers["retry-after"]) >= 1

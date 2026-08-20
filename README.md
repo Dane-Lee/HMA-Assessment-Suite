@@ -67,6 +67,8 @@ Use this workflow for day-to-day coding on the same machine. The frontend runs o
 
 The backend auto-loads the repo-root `.env` file when you run `uvicorn` locally. Use `.env.example` as the template; `DATA_DIR=./data` is the shared default for both local development and Docker.
 
+Automated scoring fails closed by default: if pose extraction is unavailable, the clip is marked for provider review instead of receiving a synthetic score. `ALLOW_FALLBACK_SCORING=1` is intended only for explicit development or test environments. Upload limits are enforced while file bytes stream to disk, and `SESSION_WRITE_LIMIT` / `SESSION_WRITE_WINDOW_SECONDS` control per-client session-creation throttling.
+
 1. Install backend dependencies:
 
 ```powershell

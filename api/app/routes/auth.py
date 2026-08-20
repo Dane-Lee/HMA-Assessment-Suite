@@ -21,6 +21,19 @@ def _now_utc() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _enforce_session_write_limit(request: Request, scope: str) -> None:
+    client_host = request.client.host if request.client else "unknown"
+    allowed, retry_after = request.app.state.runtime.session_write_limiter.allow(
+        f"{scope}:{client_host}"
+    )
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many session attempts. Try again later.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+
 @router.get("/auth")
 def auth_status(request: Request):
     runtime = request.app.state.runtime
@@ -37,6 +50,7 @@ def auth_status(request: Request):
 
 @router.post("/auth")
 def authenticate(payload: PinRequest, request: Request, response: Response):
+    _enforce_session_write_limit(request, "provider-auth")
     runtime = request.app.state.runtime
     if not runtime.settings.access_pin:
         return {"ok": True}

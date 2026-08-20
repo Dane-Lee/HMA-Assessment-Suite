@@ -53,4 +53,38 @@ describe("NewAssessmentPage", () => {
     });
     expect(await screen.findByText("Manual session")).toBeInTheDocument();
   });
+
+  it("keeps employee details collapsed and sends them when filled in", async () => {
+    apiMocks.createAssessment.mockClear();
+    render(
+      <MemoryRouter initialEntries={["/assessments/new"]}>
+        <Routes>
+          <Route path="/assessments/new" element={<NewAssessmentPage />} />
+          <Route path="/assessments/:assessmentId" element={<p>Manual session</p>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Collapsed by default so the form stays a single required field.
+    expect(screen.queryByLabelText(/^department$/i)).not.toBeInTheDocument();
+
+    // Anchored so it does not also match the section's "About employee details" info icon.
+    fireEvent.click(screen.getByRole("button", { name: /^employee details/i }));
+    fireEvent.change(screen.getByLabelText(/^first name$/i), { target: { value: "Casey" } });
+    fireEvent.change(screen.getByLabelText(/^last name$/i), { target: { value: "Jones" } });
+    fireEvent.change(screen.getByLabelText(/^department$/i), { target: { value: "Weld" } });
+
+    fireEvent.change(screen.getByLabelText(/participant name/i), { target: { value: "EMP-4471" } });
+    fireEvent.click(screen.getByLabelText(/participation is voluntary/i));
+    fireEvent.click(screen.getByRole("button", { name: /create manual assessment/i }));
+
+    await waitFor(() => {
+      expect(apiMocks.createAssessment).toHaveBeenCalledWith(
+        "EMP-4471",
+        expect.anything(),
+        false,
+        expect.objectContaining({ first_name: "Casey", last_name: "Jones", department: "Weld" })
+      );
+    });
+  });
 });

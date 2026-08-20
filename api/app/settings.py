@@ -22,6 +22,9 @@ class AppSettings:
     assessment_retention_days: int
     magic_link_lifetime_days: int = 7
     employee_session_hours: int = 12
+    allow_fallback_scoring: bool = False
+    session_write_limit: int = 10
+    session_write_window_seconds: int = 60
     public_base_url: str = "http://localhost:5181"
     enable_pose_overlays: bool = True
     max_pose_trace_frames: int = 48
@@ -54,6 +57,14 @@ def get_settings() -> AppSettings:
     assessment_retention_days = int(os.environ.get("ASSESSMENT_RETENTION_DAYS", "365"))
     magic_link_lifetime_days = int(os.environ.get("MAGIC_LINK_LIFETIME_DAYS", "7"))
     employee_session_hours = int(os.environ.get("EMPLOYEE_SESSION_HOURS", "12"))
+    allow_fallback_scoring = os.environ.get("ALLOW_FALLBACK_SCORING", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    session_write_limit = int(os.environ.get("SESSION_WRITE_LIMIT", "10"))
+    session_write_window_seconds = int(os.environ.get("SESSION_WRITE_WINDOW_SECONDS", "60"))
     public_base_url = os.environ.get("PUBLIC_BASE_URL", "http://localhost:5181").strip().rstrip("/")
     enable_pose_overlays = os.environ.get("ENABLE_POSE_OVERLAYS", "1").strip().lower() not in {
         "0",
@@ -76,6 +87,9 @@ def get_settings() -> AppSettings:
         assessment_retention_days=assessment_retention_days,
         magic_link_lifetime_days=magic_link_lifetime_days,
         employee_session_hours=employee_session_hours,
+        allow_fallback_scoring=allow_fallback_scoring,
+        session_write_limit=max(1, session_write_limit),
+        session_write_window_seconds=max(1, session_write_window_seconds),
         public_base_url=public_base_url,
         enable_pose_overlays=enable_pose_overlays,
         max_pose_trace_frames=max_pose_trace_frames,

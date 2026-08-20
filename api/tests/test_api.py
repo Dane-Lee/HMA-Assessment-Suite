@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from api.app.database import get_connection
 from api.app.main import create_app
+import api.app.services.scoring.extractors as extractor_module
 from api.app.settings import AppSettings
 
 
@@ -43,6 +44,7 @@ def build_settings(tmp_path: Path) -> AppSettings:
         max_upload_bytes=150 * 1024 * 1024,
         draft_capture_retention_days=7,
         assessment_retention_days=365,
+        allow_fallback_scoring=True,
     )
 
 
@@ -254,6 +256,147 @@ def test_temp_uploads_are_deleted(tmp_path: Path):
     )
     assert response.status_code == 200
     assert list(settings.temp_dir.iterdir()) == []
+
+
+def test_live_capture_rejects_oversized_upload_while_streaming(tmp_path: Path):
+    settings = replace(build_settings(tmp_path), max_upload_bytes=5)
+    client = TestClient(create_app(settings))
+    assessment = client.post("/api/assessments", json=create_payload("Taylor")).json()
+
+    response = client.post(
+        f"/api/assessments/{assessment['id']}/movements/trunk_rotation/captures",
+        data={"side": "left"},
+        files={"video": ("capture.webm", b"123456", "video/webm")},
+    )
+
+    assert response.status_code == 413
+    assert list(settings.temp_dir.iterdir()) == []
+
+
+def test_request_body_limit_rejects_large_multipart_before_analysis(tmp_path: Path, monkeypatch):
+    settings = replace(build_settings(tmp_path), max_upload_bytes=5)
+    app = create_app(settings)
+    monkeypatch.setattr(
+        app.state.runtime.scoring_service,
+        "analyze_capture",
+        lambda *_args: (_ for _ in ()).throw(AssertionError("analysis must not run")),
+    )
+    client = TestClient(app)
+    assessment = client.post("/api/assessments", json=create_payload("Taylor")).json()
+
+    response = client.post(
+        f"/api/assessments/{assessment['id']}/movements/trunk_rotation/captures",
+        data={"side": "left"},
+        files={"video": ("capture.webm", b"x" * (70 * 1024), "video/webm")},
+    )
+
+    assert response.status_code == 413
+    assert response.json()["detail"] == "Video file is too large."
+    assert list(settings.temp_dir.iterdir()) == []
+
+
+def test_capture_rejects_empty_and_non_video_uploads(tmp_path: Path):
+    settings = build_settings(tmp_path)
+    client = TestClient(create_app(settings))
+    assessment = client.post("/api/assessments", json=create_payload("Taylor")).json()
+    url = f"/api/assessments/{assessment['id']}/movements/trunk_rotation/captures"
+
+    empty = client.post(
+        url,
+        data={"side": "left"},
+        files={"video": ("capture.webm", b"", "video/webm")},
+    )
+    unsupported = client.post(
+        url,
+        data={"side": "left"},
+        files={"video": ("notes.txt", b"not-video", "text/plain")},
+    )
+
+    assert empty.status_code == 400
+    assert empty.json()["detail"] == "Video file is empty."
+    assert unsupported.status_code == 400
+    assert unsupported.json()["detail"] == "Upload must be a video file."
+    assert list(settings.temp_dir.iterdir()) == []
+
+
+def test_production_pose_failure_requires_manual_review(tmp_path: Path, monkeypatch):
+    settings = replace(build_settings(tmp_path), allow_fallback_scoring=False)
+    app = create_app(settings)
+    monkeypatch.setattr(extractor_module, "cv2", None)
+    monkeypatch.setattr(extractor_module, "mp", None)
+    monkeypatch.setattr(extractor_module, "np", None)
+    client = TestClient(app)
+    assessment = client.post("/api/assessments", json=create_payload("Taylor")).json()
+
+    response = client.post(
+        f"/api/assessments/{assessment['id']}/movements/trunk_rotation/captures",
+        data={"side": "left"},
+        files={"video": ("capture.webm", b"video-data", "video/webm")},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"]["code"] == "capture_unscoreable"
+    assert "pose_dependencies_unavailable" in response.json()["detail"]["quality"]["warnings"]
+    assert list(settings.temp_dir.iterdir()) == []
+
+
+def test_production_draft_pose_failure_persists_unscoreable_review_clip(
+    tmp_path: Path, monkeypatch
+):
+    settings = replace(build_settings(tmp_path), allow_fallback_scoring=False)
+    app = create_app(settings)
+    monkeypatch.setattr(extractor_module, "cv2", None)
+    monkeypatch.setattr(extractor_module, "mp", None)
+    monkeypatch.setattr(extractor_module, "np", None)
+    client = TestClient(app)
+    assessment = client.post(
+        "/api/mobile-capture/assessments", json=create_payload("Morgan")
+    ).json()
+
+    response = client.post(
+        f"/api/assessments/{assessment['id']}/draft-captures",
+        data={
+            "movement_key": "cervical_rotation",
+            "side": "right",
+            "client_capture_id": "unscoreable-clip",
+        },
+        files={"video": ("capture.webm", b"video-data", "video/webm")},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["score"] is None
+    assert response.json()["source"] == "unscoreable"
+    assert response.json()["video_url"]
+    assert len(list(settings.draft_capture_dir.iterdir())) == 1
+    with get_connection(settings.db_path) as connection:
+        row = connection.execute(
+            "SELECT score, source FROM draft_captures WHERE client_capture_id = ?",
+            ("unscoreable-clip",),
+        ).fetchone()
+    assert row["score"] is None
+    assert row["source"] == "unscoreable"
+
+
+def test_draft_capture_rejects_oversized_upload_without_persisting_file(tmp_path: Path):
+    settings = replace(build_settings(tmp_path), max_upload_bytes=5)
+    client = TestClient(create_app(settings))
+    assessment = client.post(
+        "/api/mobile-capture/assessments", json=create_payload("Morgan")
+    ).json()
+
+    response = client.post(
+        f"/api/assessments/{assessment['id']}/draft-captures",
+        data={
+            "movement_key": "cervical_rotation",
+            "side": "right",
+            "client_capture_id": "oversized-clip",
+        },
+        files={"video": ("capture.webm", b"123456", "video/webm")},
+    )
+
+    assert response.status_code == 413
+    assert list(settings.draft_capture_dir.iterdir()) == []
+    assert client.get(f"/api/assessments/{assessment['id']}/draft-captures").json() == []
 
 
 def test_mobile_capture_draft_upload_is_persisted_and_idempotent(tmp_path: Path):
@@ -534,6 +677,23 @@ def test_pin_auth_logout_clears_session(tmp_path: Path):
 
     client.post("/api/auth", json={"pin": "5380"})
     assert client.get("/api/assessments").status_code == 200
+
+
+def test_provider_auth_writes_are_rate_limited(tmp_path: Path):
+    settings = replace(
+        build_settings(tmp_path),
+        access_pin="5380",
+        session_write_limit=2,
+        session_write_window_seconds=60,
+    )
+    client = TestClient(create_app(settings))
+
+    assert client.post("/api/auth", json={"pin": "wrong-1"}).status_code == 401
+    assert client.post("/api/auth", json={"pin": "wrong-2"}).status_code == 401
+    limited = client.post("/api/auth", json={"pin": "5380"})
+
+    assert limited.status_code == 429
+    assert int(limited.headers["retry-after"]) >= 1
 
     logout_response = client.delete("/api/auth")
     assert logout_response.status_code == 200

@@ -1,4 +1,5 @@
 import type {
+  AssessmentDetails,
   ConsentPayload,
   IssuedUploadSession,
   ManualAssessmentDetail,
@@ -62,11 +63,16 @@ export function listMovements() {
   return request<MovementDefinition[]>("/api/movements");
 }
 
-export function createAssessment(participantName: string, consent: ConsentPayload, hasOA = false) {
+export function createAssessment(
+  participantName: string,
+  consent: ConsentPayload,
+  hasOA = false,
+  details: AssessmentDetails = {}
+) {
   return request<ManualAssessmentDetail>("/api/assessments", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ participant_name: participantName, consent, has_oa: hasOA })
+    body: JSON.stringify({ participant_name: participantName, consent, has_oa: hasOA, ...details })
   });
 }
 

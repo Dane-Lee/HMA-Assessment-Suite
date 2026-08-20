@@ -109,6 +109,9 @@ export function AssessmentSessionPage() {
         }
       }));
     } catch (reason) {
+      if ((reason as { code?: string })?.code === "capture_unscoreable") {
+        openManualScoring(selectedMovement.key, side);
+      }
       setError(reason instanceof Error ? reason.message : "Unable to analyze capture.");
     } finally {
       setBusySide(null);
@@ -196,7 +199,7 @@ export function AssessmentSessionPage() {
       if (entry.manualActive) {
         return entry.manualDraft?.score !== null && entry.manualDraft?.score !== undefined;
       }
-      return Boolean(entry.capture);
+      return entry.capture?.score !== null && entry.capture?.score !== undefined;
     });
     if (!hasAllRequiredSides) {
       setError("Complete a manual score or analyzed capture for each side before saving this movement.");
@@ -209,7 +212,7 @@ export function AssessmentSessionPage() {
       let updatedAssessment = assessment;
       const appPayload: FinalizePayload = {};
       for (const entry of sideStates) {
-        if (!entry.capture) {
+        if (!entry.capture || entry.capture.score === null) {
           continue;
         }
         appPayload[entry.side] = {
@@ -237,7 +240,7 @@ export function AssessmentSessionPage() {
           score: entry.manualDraft.score,
           faults: entry.manualDraft.faults,
           other_fault: entry.manualDraft.otherFault.trim() || undefined,
-          app_score: entry.capture?.score,
+          app_score: entry.capture?.score ?? undefined,
           app_metrics: entry.capture?.metrics,
           app_quality: entry.capture?.quality,
           app_source: entry.capture?.source
@@ -401,7 +404,7 @@ export function AssessmentSessionPage() {
                   {!manualVisible ? (
                     <button
                       className="button-secondary mt-4 w-full"
-                      onClick={() => openManualScoring(selectedMovement.key, side, captureScore)}
+                      onClick={() => openManualScoring(selectedMovement.key, side, captureScore ?? undefined)}
                       type="button"
                     >
                       Use manual scoring

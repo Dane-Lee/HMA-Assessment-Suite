@@ -23,11 +23,13 @@ from ..schemas import (
     ProviderReviewRequest,
 )
 from ..services.scoring.calibration import build_calibration_suggestions
+from ..services.scoring.service import UnscoreableCaptureError
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["assessments"])
 VIDEO_SUFFIXES = {".webm", ".mp4", ".mov", ".m4v", ".avi", ".mpeg", ".mpg"}
+UPLOAD_CHUNK_BYTES = 1024 * 1024
 
 
 def get_runtime(request: Request) -> RuntimeState:
@@ -46,6 +48,33 @@ def _is_video_upload(video: UploadFile) -> bool:
     suffix = Path(video.filename or "").suffix.lower()
     content_type = (video.content_type or "").lower()
     return content_type.startswith("video/") or suffix in VIDEO_SUFFIXES
+
+
+async def _stream_upload_to_path(video: UploadFile, destination: Path, max_bytes: int) -> int:
+    bytes_written = 0
+    with destination.open("wb") as handle:
+        while chunk := await video.read(UPLOAD_CHUNK_BYTES):
+            bytes_written += len(chunk)
+            if bytes_written > max_bytes:
+                raise HTTPException(
+                    status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+                    detail="Video file is too large.",
+                )
+            handle.write(chunk)
+    if bytes_written == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Video file is empty.",
+        )
+    return bytes_written
+
+
+def _unscoreable_detail(exc: UnscoreableCaptureError) -> dict:
+    return {
+        "code": "capture_unscoreable",
+        "message": "Automated pose analysis was unavailable. Enter a provider score or retake the clip.",
+        "quality": asdict(exc.quality),
+    }
 
 
 def _is_under_directory(path: Path, directory: Path) -> bool:
@@ -273,13 +302,27 @@ async def score_capture(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown movement.")
     if side not in movement["sides"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid side for movement.")
+    if not _is_video_upload(video):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Upload must be a video file.")
 
     suffix = Path(video.filename or "capture.webm").suffix or ".webm"
     temp_path = runtime.settings.temp_dir / f"{uuid4()}{suffix}"
     logger.debug("TEMP | created %s", temp_path)
     try:
-        temp_path.write_bytes(await video.read())
-        result = runtime.scoring_service.analyze_capture(movement_key, side, temp_path)
+        await _stream_upload_to_path(video, temp_path, runtime.settings.max_upload_bytes)
+        try:
+            result = runtime.scoring_service.analyze_capture(movement_key, side, temp_path)
+        except UnscoreableCaptureError as exc:
+            runtime.repository.log_audit_event(
+                "capture_unscoreable",
+                assessment_id=assessment_id,
+                movement_key=movement_key,
+                metadata={"side": side, "quality_warnings": exc.quality.warnings},
+            )
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail=_unscoreable_detail(exc),
+            ) from exc
         return CaptureResponse(
             movement_key=result.movement_key,
             side=result.side,  # type: ignore[arg-type]
@@ -345,12 +388,8 @@ async def upload_draft_capture(
         client_capture_id.strip(),
     )
     if existing is not None:
+        await video.close()
         return _draft_capture_response(existing, request)
-
-    body = await video.read()
-    await video.close()
-    if len(body) > runtime.settings.max_upload_bytes:
-        raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="Video file is too large.")
 
     suffix = Path(video.filename or "capture.webm").suffix.lower() or ".webm"
     if suffix not in VIDEO_SUFFIXES:
@@ -361,8 +400,28 @@ async def upload_draft_capture(
     old_record = runtime.repository.get_draft_capture_by_slot(assessment_id, movement_key, side)
 
     try:
-        stored_path.write_bytes(body)
-        result = runtime.scoring_service.analyze_capture(movement_key, side, stored_path)
+        file_size_bytes = await _stream_upload_to_path(
+            video,
+            stored_path,
+            runtime.settings.max_upload_bytes,
+        )
+        try:
+            result = runtime.scoring_service.analyze_capture(movement_key, side, stored_path)
+            score = result.score
+            detected_faults = result.detected_faults
+            metrics = result.metrics
+            pose_trace = asdict(result.pose_trace) if result.pose_trace else None
+            quality = asdict(result.quality)
+            confidence = result.confidence
+            source = result.source
+        except UnscoreableCaptureError as exc:
+            score = None
+            detected_faults = []
+            metrics = {}
+            pose_trace = None
+            quality = asdict(exc.quality)
+            confidence = 0.0
+            source = "unscoreable"
         created_at = _now_utc()
         expires_at = created_at + timedelta(days=runtime.settings.draft_capture_retention_days)
         record = runtime.repository.upsert_draft_capture(
@@ -370,16 +429,16 @@ async def upload_draft_capture(
             movement_key=movement_key,
             side=side,
             client_capture_id=client_capture_id.strip(),
-            score=result.score,
-            detected_faults=result.detected_faults,
-            metrics=result.metrics,
-            pose_trace=asdict(result.pose_trace) if result.pose_trace else None,
-            quality=asdict(result.quality),
-            confidence=result.confidence,
-            source=result.source,
+            score=score,
+            detected_faults=detected_faults,
+            metrics=metrics,
+            pose_trace=pose_trace,
+            quality=quality,
+            confidence=confidence,
+            source=source,
             original_filename=video.filename,
             content_type=video.content_type,
-            file_size_bytes=len(body),
+            file_size_bytes=file_size_bytes,
             video_path=str(stored_path),
             created_at=created_at.isoformat(),
             expires_at=expires_at.isoformat(),
@@ -388,6 +447,8 @@ async def upload_draft_capture(
         if stored_path.exists():
             stored_path.unlink()
         raise
+    finally:
+        await video.close()
 
     if old_record and old_record.get("video_path") and old_record["video_path"] != str(stored_path):
         old_path = Path(old_record["video_path"])
@@ -399,8 +460,9 @@ async def upload_draft_capture(
         movement_key=movement_key,
         metadata={
             "side": side,
-            "file_size_bytes": len(body),
+            "file_size_bytes": file_size_bytes,
             "replaced_existing": bool(old_record),
+            "score_available": score is not None,
         },
     )
     return _draft_capture_response(record, request)

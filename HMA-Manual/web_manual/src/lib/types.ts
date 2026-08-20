@@ -66,7 +66,18 @@ export type UploadSessionSummary = {
   submitted_at: string | null;
 };
 
-export type ManualAssessmentSummary = {
+// Optional identity details. Blank unless the provider fills them in on the
+// New Assessment form; they populate the Corrective Exercise Tracker export.
+export type AssessmentDetails = {
+  first_name?: string;
+  last_name?: string;
+  company?: string;
+  department?: string;
+  shift?: string;
+  work_location?: string;
+};
+
+export type ManualAssessmentSummary = AssessmentDetails & {
   id: string;
   participant_name: string;
   employee_id: string | null;

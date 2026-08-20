@@ -10,6 +10,18 @@ from .auth import hash_password, hash_token, verify_password
 from .database import get_connection
 
 
+# Optional identity details captured alongside the participant name. Every one is
+# free text, defaults to "", and feeds the Corrective Exercise Tracker export.
+ASSESSMENT_DETAIL_FIELDS = (
+    "first_name",
+    "last_name",
+    "company",
+    "department",
+    "shift",
+    "work_location",
+)
+
+
 def now_utc() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -222,11 +234,14 @@ class ManualRepository:
         consent_scope: dict[str, bool],
         retention_days: int,
         has_oa: bool = False,
+        details: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         created_at = now_utc()
+        details = details or {}
         record = {
             "id": str(uuid4()),
             "participant_name": participant_name.strip(),
+            **{field: (details.get(field) or "").strip() for field in ASSESSMENT_DETAIL_FIELDS},
             "employee_id": employee_id,
             "created_by_provider_id": provider_id,
             "status": "draft",
@@ -242,12 +257,16 @@ class ManualRepository:
             connection.execute(
                 """
                 INSERT INTO manual_assessments (
-                    id, participant_name, employee_id, created_by_provider_id,
+                    id, participant_name, first_name, last_name, company,
+                    department, shift, work_location,
+                    employee_id, created_by_provider_id,
                     status, total_score, score_band, has_oa, consent_notice_version,
                     consent_scope_json, created_at, retention_expires_at
                 )
                 VALUES (
-                    :id, :participant_name, :employee_id, :created_by_provider_id,
+                    :id, :participant_name, :first_name, :last_name, :company,
+                    :department, :shift, :work_location,
+                    :employee_id, :created_by_provider_id,
                     :status, :total_score, :score_band, :has_oa, :consent_notice_version,
                     :consent_scope_json, :created_at, :retention_expires_at
                 )

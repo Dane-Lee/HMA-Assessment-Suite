@@ -237,7 +237,13 @@ export function CaptureRecorder({
                     <h4 className="font-semibold">{sideLabel}</h4>
                   </div>
                   <div className="rounded-full bg-panel-mid px-3 py-1 text-xs font-semibold text-ink/70">
-                    {result ? `Score ${result.score}/3` : file ? "Ready" : "Not captured"}
+                    {result
+                      ? result.score === null
+                        ? "Manual review"
+                        : `Score ${result.score}/3`
+                      : file
+                        ? "Ready"
+                        : "Not captured"}
                   </div>
                 </div>
 

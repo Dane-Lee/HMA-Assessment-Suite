@@ -821,7 +821,7 @@ class AssessmentRepository:
         movement_key: str,
         side: str,
         client_capture_id: str,
-        score: int,
+        score: int | None,
         detected_faults: list[str],
         metrics: dict[str, Any],
         pose_trace: dict[str, Any] | None,

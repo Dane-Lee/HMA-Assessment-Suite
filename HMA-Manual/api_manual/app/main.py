@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from .auth import generate_token, verify_totp
 from .database import initialize_database
-from .repository import ManualRepository, now_utc
+from .repository import ASSESSMENT_DETAIL_FIELDS, ManualRepository, now_utc
 from .settings import ManualSettings, get_settings
 
 
@@ -42,6 +42,14 @@ class AssessmentCreatePayload(BaseModel):
     participant_name: str = Field(min_length=1, max_length=120)
     consent: ConsentPayload
     has_oa: bool = False
+    # Optional identity details; all blank by default. They flow through to the
+    # Corrective Exercise Tracker export so the provider does not re-key them.
+    first_name: str = Field(default="", max_length=120)
+    last_name: str = Field(default="", max_length=120)
+    company: str = Field(default="", max_length=120)
+    department: str = Field(default="", max_length=120)
+    shift: str = Field(default="", max_length=120)
+    work_location: str = Field(default="", max_length=120)
 
     @field_validator("participant_name")
     @classmethod
@@ -240,6 +248,7 @@ def _register_api(app: FastAPI) -> None:
             consent_scope=_consent_scope(payload.consent),
             retention_days=settings.assessment_retention_days,
             has_oa=payload.has_oa,
+            details={field: getattr(payload, field) for field in ASSESSMENT_DETAIL_FIELDS},
         )
         repository.log_audit_event(
             "manual_assessment_create",

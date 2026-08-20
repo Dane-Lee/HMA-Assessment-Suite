@@ -149,4 +149,46 @@ describe("MobileCapturePage", () => {
       expect(screen.queryByText(/local queued clip/i)).not.toBeInTheDocument();
     });
   });
+
+  it("shows that an unscoreable upload was retained for provider review", async () => {
+    apiMocks.uploadDraftCapture.mockResolvedValueOnce({
+      id: "draft-right",
+      assessment_id: "assessment-1",
+      movement_key: "cervical_rotation",
+      side: "right",
+      client_capture_id: "client-right",
+      score: null,
+      detected_faults: [],
+      confidence: 0,
+      metrics: {},
+      source: "unscoreable",
+      original_filename: "right.webm",
+      content_type: "video/webm",
+      file_size_bytes: 10,
+      created_at: "2026-04-16T12:00:00Z",
+      expires_at: "2026-04-23T12:00:00Z",
+      video_url: "/api/video/right",
+      video_deleted_at: null
+    });
+    render(
+      <MemoryRouter>
+        <MobileCapturePage />
+      </MemoryRouter>
+    );
+    fireEvent.change(screen.getByPlaceholderText(/enter participant name or id/i), {
+      target: { value: "Jordan" }
+    });
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("button", { name: /create mobile capture session/i }));
+    await screen.findByRole("heading", { name: "Jordan" });
+
+    const file = new File(["video"], "right.webm", { type: "video/webm" });
+    fireEvent.change(screen.getByLabelText(/record clip/i), { target: { files: [file] } });
+    fireEvent.click(screen.getByRole("button", { name: /confirm upload/i }));
+
+    await screen.findByText(/step 2 of 2/i);
+    fireEvent.click(screen.getByRole("button", { name: /back/i }));
+    expect(await screen.findByText(/uploaded: provider review required/i)).toBeInTheDocument();
+    expect(screen.getByText(/clip was saved for provider review/i)).toBeInTheDocument();
+  });
 });
