@@ -9,6 +9,50 @@ session must know.
 
 ---
 
+## 2026-08-20 (later) · personal computer
+
+### Cloned the real Cadence — and found the QR handoff already built
+
+Moved the unrelated schedule-tracker prototype out of `HMA-Cadence/` (now at
+`ATI/Encounter Suite/prototypes/hma-schedule-tracker/`, backed up first) and cloned
+`Dane-Lee/HMA-Cadence` into its place. That machine had never had the real Cadence.
+
+**The other session built the QR plan handoff on 2026-08-05 (`4bddd5b`)** — `docs/qr-envelope.md`,
+`src/lib/qr/` (envelope, keystore, pending, fragment, applyPlan), `PairDevice.jsx`, tests, and
+committed vectors. Supabase was removed 2026-08-04 (`5c644cb`).
+
+**The plan has been rewritten to adopt that envelope wholesale (decision E11).** Two decisions this
+session made independently are now dead:
+
+- **E4** (4-digit secrets) and **E8** (admin-generated setup code spoken aloud at handover) are
+  superseded. The built design is stronger: a **256-bit random key delivered by a second QR** scanned
+  off the EIS laptop, plus a **pending** state that holds an unopenable plan until pairing happens.
+  That pending state dissolves the constraint E8 was invented to work around — nothing has to be
+  conveyed at the moment the sheet changes hands, and pairing can happen weeks later with no reprint.
+
+**A factual correction this session got wrong.** It measured a full contract-v1 payload at 5,487
+bytes and concluded it could not fit in a QR, which drove a payload-slimming redesign. **That
+ignored DEFLATE.** Cadence's measured figures are 484 chars for 1 exercise and 911 for 12, against
+~1,270 at the highest error correction. Slimming is still worth doing — it keeps identifiable health
+information out of the code entirely — but that is a privacy argument, not a capacity one.
+
+### What the Tracker still needs
+
+The commit was "Cadence side." The Tracker has no emitter. It must implement envelope v1
+independently and run Cadence's committed vectors, generate the 256-bit key
+(`crypto.getRandomValues`), import it `extractable: true` to render the pairing QR, and refuse to
+print rather than emit an oversized code.
+
+### Two questions for the other session
+
+1. **iOS storage.** Both QRs open in the phone's native browser by design. If a home-screen PWA and
+   Safari do not share storage, a plan scanned in Safari lands in Safari's store while the installed
+   app is empty — and the same applies to the pending plan and the IndexedDB key. This affects the
+   built code, not just the plan. Has it been tested on a real iPhone?
+2. **The return path.** Cadence has QR *intake* only. The weekly-progress and pain-report **email**
+   channel is this plan's design and exists nowhere in code — encrypted payload between markers,
+   batch-pasted into Cadence-Admin. Is something different being built for that job?
+
 ## 2026-08-20 · personal computer
 
 ### What happened

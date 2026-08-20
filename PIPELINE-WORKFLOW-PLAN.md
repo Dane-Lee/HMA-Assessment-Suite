@@ -1,6 +1,6 @@
 # HMA Pipeline — HMA-Manual → HMA Tracker → Cadence
 
-**Rewritten:** 2026-08-17 · **Amended:** 2026-08-20 (second audit; E1–E10) · Supersedes the 2026-08-14 draft
+**Rewritten:** 2026-08-17 · **Amended:** 2026-08-20 (second audit, then aligned to Cadence's built QR envelope; E1–E11) · Supersedes the 2026-08-14 draft
 **Status:** direction decided, nothing built beyond hop 1
 
 ---
@@ -75,11 +75,12 @@ does not exist.
 | 2 | EIS | HMA-Manual | Export for Tracker → paste into the Tracker |
 | 3 | EIS | Tracker | Auto-suggestions from scores/hypermobility/quality-focus, then clinical edits; program fitted to the 20-min/day budget |
 | 4 | EIS | Tracker | Finalize → export plan payload |
-| 5 | EIS | Cadence-Admin | Paste payload; Cadence-Admin generates the setup code and the encrypted QR |
+| 5 | EIS | Cadence-Admin | Paste payload; generate the employee's 256-bit key, encrypt the envelope, render the plan QR |
 | 6 | EIS | both | Print in advance: the Tracker's illustrated program, plus Cadence-Admin's QR companion page |
-| 7 | EIS | — | **Handover at a later appointment** (may be on the factory floor). Give the sheets, say the setup code, help with install |
+| 7 | EIS | — | **Handover at a later appointment** (may be on the factory floor). Give the sheets. No secret to convey |
 | 8 | Employee | phone camera | Scan QR from the companion page → browser opens the client app → install |
-| 9 | Employee | Cadence-Client | Enter setup code → plan decrypts → choose an app PIN → daily checklist |
+| 9 | Employee | Cadence-Client | Unpaired → plan held **pending**. Prompt to see the EIS |
+| 9b | EIS + Employee | Cadence-Admin → phone | **Pairing** (same visit or weeks later): employee scans the pairing QR off the laptop → key stored non-extractably → pending plan applies immediately, no reprint |
 | 10 | Employee | Cadence-Client | Tap exercises complete; report pain if it occurs |
 | 11 | Employee | Cadence-Client | Pain tap → immediate prompt → sends encrypted report by email |
 | 12 | EIS | Cadence-Admin | Paste the email → report decodes into the pain queue → follow up in person |
@@ -98,31 +99,69 @@ does not exist.
 
 ### 4.1 Outbound — the plan QR
 
-Encrypted with an admin-generated setup code (E8), printed on the companion page in advance.
+**This is already built on the Cadence side** (2026-08-05, `4bddd5b`). The spec is
+`HMA-Cadence/docs/qr-envelope.md`; the implementation is `src/lib/qr/`. **The Tracker must
+implement the same format independently — it is the only thing the two apps share.** Committed
+test vectors (`test/vectors/qr-envelope-v1.json`) pin the decode direction and are the real
+contract; both repos run them.
 
-**The QR carries the prescription. The client app carries the content.**
+**Two QR codes, both encoding a URL** so the phone's native camera opens them — no in-app scanner,
+no camera permission, no scanning library on either side:
 
-| In the QR | In the client app's bundled library |
-|---|---|
-| Recognition key, badge #, first name | Exercise name |
-| Plan ID, library version, admin email | Instructions |
-| Assessment / follow-up / re-test dates | Image |
-| Work days, session budget | — |
-| Per exercise: ID, days, **effective sets/reps** | — |
+```
+Plan QR      https://<cadence-host>/#p=<base64url>    printed on the sheet
+Pairing QR   https://<cadence-host>/#k=<base64url>    shown on the EIS laptop, scanned in person
+```
 
-Nothing dosage-related is ever inferred from the library. What the EIS prescribed is what the
-employee sees, permanently, and it always matches the printed sheet.
+The payload rides in the fragment, which is never sent to the host. Cadence reads it in memory and
+calls `history.replaceState()` immediately so it never lands in browser history or syncs to a
+Google/Apple account.
 
-**Measured sizes** (12-exercise plan, real library strings):
+**Envelope v1** — `JSON → minify → deflate-raw → AES-GCM → [version|keyId|iv|ciphertext] → base64url`
 
-| Shape | Bytes | Fits QR at EC-H (1,273)? |
+| Offset | Bytes | Field |
 |---|---|---|
-| Old contract v1, content verbatim | 5,487 | No — 5 codes |
-| Assignment-only | 308 | Yes |
-| With prescriptions carried | ~525 | Yes |
-| Encrypted + encoded | ~760 | Yes, ~500 spare |
+| 0 | 1 | `version` (currently 1) |
+| 1 | 4 | `keyId` = `SHA-256(rawKey)[0..4]` |
+| 5 | 12 | `iv`, random per plan, never reused |
+| 17 | … | ciphertext, AES-GCM-256, 16-byte tag last |
 
-Highest error correction is deliberate: phone cameras, plant lighting, creased paper.
+`keyId` is **not** a security boundary — it lets Cadence tell *"this plan isn't for this device"*
+apart from *"this data is corrupt"* and show the right screen.
+
+**The key is 32 random bytes** from the OS CSPRNG (`crypto.getRandomValues`), generated on the
+Tracker, not derived from anything about the employee. Cadence imports it **non-extractable** into
+IndexedDB, so no script on the phone can read it back out. The Tracker imports it
+`extractable: true` because it has to render it as the pairing QR.
+
+**The pending state is the pivot of the design.** An employee can scan their sheet before they have
+ever been paired. Cadence holds the ciphertext (meaningless without the key, so localStorage is
+fine) and applies it the moment a key arrives. **That is what lets pairing happen days or weeks
+after handover with no reprint** — and it is why no secret has to be conveyed at the moment the
+sheet changes hands.
+
+States Cadence already handles: no key on device, unknown `keyId` (never revealing whose plan it
+is), GCM failure, valid-but-invalid payload, already-applied `plan_id`, unsupported version.
+
+**Capacity — corrected.** An earlier measurement in this plan put a full contract-v1 payload at
+5,487 bytes and concluded it could not fit. **That was wrong: it ignored DEFLATE.** Cadence's
+measured figures against the committed vectors:
+
+| Plan | Envelope |
+|---|---|
+| 1 exercise | 484 chars |
+| 12 exercises | 911 chars |
+
+Plus ~30 chars of URL prefix, against ~1,270 at the highest error correction. A realistic plan fits
+in one code with room to spare.
+
+**So payload slimming is not required for capacity.** It is still worth doing, for a different
+reason: sending badge number and exercise IDs instead of names and instructions means the code
+carries no identifiable health information at all. That is a privacy argument. Do not conflate the
+two when explaining this.
+
+The Tracker must still **refuse to print rather than emit an oversized, unscannable code.**
+Headroom is not a guarantee.
 
 ### 4.2 Return — email
 
@@ -184,13 +223,14 @@ shoulder hurts," and is acceptable.
 | E1 | **Tracker → Cadence-Admin hand-off is a paste**, reusing Cadence's existing import page. One action per employee at the appointment. A shared watched folder is the upgrade path if it becomes tedious; relaying through HMA-Manual's local server is rejected because it would break the Tracker's standalone property. |
 | E2 | **Two printouts, two purposes.** The Tracker prints the full illustrated program — unchanged, and complete on its own for an employee with no phone or who declines Cadence. Cadence-Admin prints a companion page: QR, install steps, PIN reminder, and a plain exercise list as backup. No print layout is duplicated. |
 | E3 | **Web-first; desktop stays a late-binding option.** Build in the browser, keep every read and write behind the existing storage adapters. Revisit if ATI's software policy proves permissive. |
-| E4 | **Secrets are 4 digits for now.** Sufficient against the realistic threat (someone picking up a printed sheet). Upgradeable to 6+ later if the offline-cracking exposure ever matters. |
+| E4 | ~~**Secrets are 4 digits for now.**~~ *(DEAD — superseded by E11. Keys are 256-bit random, delivered by pairing QR.)* Sufficient against the realistic threat (someone picking up a printed sheet). Upgradeable to 6+ later if the offline-cracking exposure ever matters. |
 | E5 | **Thumbs-up/down feedback rides home** with completions and pain events. Costs a couple of bytes; Cadence already captures it per assignment. |
 | E6 | **Client PWA hosts on Vercel**, as its own project pointed at the Cadence repo — separate from the Tracker's. Configured to build **the client only**; the admin build is never deployed anywhere and stays local to the practitioner machine. Cannot be set up until the build split in Phase 5 exists. |
 | E7 | **HMA-Manual gets its own repo before Phase 1.** Its code exists on GitHub only as a folder inside `HMA-Assessment-Suite` (commits through 2026-07-31), and the local working copy has no `.git` at all. Run `RESTRUCTURE-PLAN.md` Phase 2 first — subtree split, create the repo, convert the folder to a clone in place, then `git rm -r HMA-Manual` in HMA-AI. Pause OneDrive while doing it. |
-| E8 | **Two secrets, separate jobs.** Cadence-Admin generates a random **setup code** when the plan is built; it encrypts the QR and is the permanent key for every returned report. The EIS conveys it verbally at handover. The employee then chooses their own **app PIN**, which is a local lock only — it never leaves the phone, the EIS never knows it, and changing it breaks nothing. Nothing is captured at the assessment, and everything the employee receives is printed in advance. Consequence: a lost phone needs the setup code from the EIS to re-enroll, so device loss is a conversation rather than self-service. |
+| E8 | ~~**Two secrets, separate jobs.**~~ *(DEAD — superseded by E11. The pending state removes the problem this solved.)* Original:  Cadence-Admin generates a random **setup code** when the plan is built; it encrypts the QR and is the permanent key for every returned report. The EIS conveys it verbally at handover. The employee then chooses their own **app PIN**, which is a local lock only — it never leaves the phone, the EIS never knows it, and changing it breaks nothing. Nothing is captured at the assessment, and everything the employee receives is printed in advance. Consequence: a lost phone needs the setup code from the EIS to re-enroll, so device loss is a conversation rather than self-service. |
 | E9 | **Badge # optional in HMA-Manual, required at plan issue.** Anonymous single-field scoring survives. The Tracker flags a badge-less record on import so the gap surfaces before a program is built, not after. |
 | E10 | **All 24 missing exercise images sourced before the client ships.** 36 of 60 IDs currently have one; 15 of the 24 gaps are in the auto-suggestion lists, and all six trunk exercises `t1`–`t6` are missing. The gap already affects the printed sheet today, so each image fixes print immediately. |
+| E11 | **Adopt Cadence's built QR envelope v1 wholesale** (`HMA-Cadence/docs/qr-envelope.md`, built 2026-08-05). It supersedes E4 and E8: a 256-bit random key delivered by a second QR scanned off the EIS laptop, and a **pending** state that lets an employee scan first and pair weeks later. Stronger than the 4-digit setup code, and it dissolves the constraint that forced that design — nothing has to be conveyed at handover. The Tracker implements the same format independently and runs Cadence's committed test vectors. |
 
 ---
 
@@ -284,9 +324,13 @@ installs over cellular.
 
 ### Phase 4 — Issue a plan
 Tracker emits the payload; the EIS pastes it into Cadence-Admin (E1). Cadence-Admin generates the
-setup code (E8) and the recognition key — reusing the employee's existing key if they already have
-one — encrypts, and produces the QR. Nothing is captured from the employee at this stage; they are
-not present (E8). Two printouts
+employee's 256-bit plan key (reusing their existing one if paired already), encodes envelope v1
+(E11), and renders **two** QRs: the plan code for the sheet, and the pairing code for the screen at
+pairing time. Nothing is captured from the employee — they are not present.
+
+**Implement envelope v1 against Cadence's committed test vectors** (`test/vectors/qr-envelope-v1.json`).
+Encoding is verified by round-trip, not byte-pinning — DEFLATE output differs between builds.
+Import the key `extractable: true` on this side; Cadence imports it non-extractable. Two printouts
 (E2): the Tracker's existing illustrated program, unchanged, and Cadence-Admin's new companion page
 carrying the QR, install steps, PIN reminder and a plain exercise list. Size-regression test (C1).
 **Operational rule (G3):** if a plan uses an exercise added since the client was last deployed,
@@ -299,9 +343,11 @@ Phase 4 cannot depend on a client that does not exist yet.)
 
 ### Phase 5 — The client app
 Separate build with admin routes excluded. Seed gating and empty states. Ingest rewired to the
-bundled library. Scan → setup code → decrypt → **choose an app PIN** → daily checklist. Version-mismatch refusal.
-Remove the obsolete `must_change_pin` / `SetPin` temp-PIN flow; the app PIN is a local lock and may
-be changed freely without affecting decryption (E8).
+bundled library. Scan → if paired, decrypt and apply; if not, hold **pending** and prompt to see the EIS.
+Version-mismatch refusal. **Most of this already exists** — `src/lib/qr/` and `PairDevice.jsx` were
+built 2026-08-05. What Phase 5 actually adds is the client/admin build split, seed gating, empty
+states, and the bundled-library ingest (B2). The app PIN is a local lock only and never touches
+decryption, so changing it is harmless; the obsolete `must_change_pin` temp-PIN flow can go.
 Once the split exists, create the Vercel project for the client build (E6).
 **Accept:** an employee scans the sheet, installs, enters their PIN, and sees the right exercises on
 the right weekday — offline. The deployed bundle contains no admin routes.
@@ -342,11 +388,17 @@ interface. Cross-link the READMEs.
 
 ## 9. Open items
 
-1. **iOS storage behavior** — a home-screen PWA and Safari may not share storage. Verify on a real
-   iPhone. In-app scanning after install avoids the question.
+1. **iOS storage behavior — still live, and now sharper.** Both QRs open in the phone's native
+   browser by design. If a home-screen PWA and Safari do not share storage, a plan scanned in
+   Safari lands in Safari's store while the installed app comes up empty — and the same applies
+   to the pending plan and the IndexedDB key. Verify on a real iPhone. Raise with the other
+   session; it affects their built code, not just this plan.
 2. **Install instructions must cover the default browser**, not just Safari.
 3. **Batch email at scale** — parked, owner has an approach to bring.
 4. **D5** — as-of dating accepted provisionally.
 5. **Software-policy probe.** Whether an installed application actually runs on the practitioner
    machine is unknown — policy is inconsistent. Testing it is independent of the build and can
    happen any time; the answer decides whether E3 gets revisited.
+7. **Does the email return path survive?** Cadence has built the QR *intake* only. The weekly-progress
+   and pain-report email channel (B3, D1) is this plan's design and exists nowhere in code. Confirm
+   the other session isn't building something different for the same job.
