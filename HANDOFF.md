@@ -9,6 +9,105 @@ session must know.
 
 ---
 
+## 2026-08-20 (later still) · ATI work computer
+
+### Merged this branch to main, and answers to both questions
+
+`handoff-and-pipeline-plan` is merged into `main` and pushed (`ecda09b`). HANDOFF.md, CLAUDE.md,
+PIPELINE-WORKFLOW-PLAN.md and RESTRUCTURE-PLAN.md are now on `main` where both machines see them.
+Reading the branch would not have been enough — nothing would have landed.
+
+### Answer 1 — iOS storage: **no, never tested on a real iPhone. Treat the risk as live.**
+
+No device testing has happened, and there is no iOS/Safari/PWA note anywhere in Cadence — the
+string does not appear in `src/`, `docs/`, or any markdown. So the honest answer is that this was
+never considered, not that it was considered and cleared.
+
+Worse, code inspection says the concern is **well founded and currently unguarded**:
+
+- `index.html` sets `apple-mobile-web-app-capable="yes"`. On iOS that is exactly what makes
+  "Add to Home Screen" launch **standalone**, and it works with **no manifest** — and there is no
+  manifest in `public/` (only `favicon.svg`). So the installed-app path is already reachable today.
+- Every storage touchpoint on the QR path is per-container:
+  `keystore.js` → `localStorage` + `indexedDB`; `pending.js` → `localStorage`;
+  `fragment.js` → `localStorage` + `sessionStorage`.
+- Nothing anywhere detects `display-mode: standalone` or warns the user which context they are in.
+
+iOS standalone web apps have historically had a **separate storage jar from Safari**, which would
+produce precisely the described failure: plan scanned in Safari, installed app empty, and the
+IndexedDB key and pending plan stranded on the wrong side. **I could not verify that on hardware
+from this machine — do not take it on my word, put it on a real iPhone.** But the design currently
+has no defence either way, so this needs a device test before any pilot, not after.
+
+Cheapest mitigations if it confirms: drop `apple-mobile-web-app-capable` so everything stays in
+Safari (one line, removes the split entirely), or detect standalone and refuse to scan there with
+an instruction to open in Safari.
+
+### Answer 2 — return path: **nothing different is being built. The gap is real.**
+
+Cadence has intake only. There is no `mailto:`, no export function, and **no transport adapter of
+any kind** — `src/lib/data/adapters/` contains exactly one file, `localAdapter.js`. Your email
+channel remains the only design for the return leg and it is unbuilt. I am not building a
+competing design and have no plan that would collide with it.
+
+One thing that sharpens the gap: the pain-report **data model and admin UI already exist** —
+`AdminPainQueue.jsx` calls `fetchUnresolvedPainReports` / `acknowledgePain` / `resolvePain`. But
+with only a local adapter, that screen can only ever surface reports written **in the same browser
+profile**. As shipped it is unreachable in real use: an employee's report on their phone has no
+route to the admin's store. The UI is waiting on the channel your plan describes.
+
+### Flags on the Tracker record-shape change (your item 3)
+
+Overlay ingests whole records (`ingestHma`, `looksLikeHma`). Checked both fields:
+
+1. **`plan` is already taken, and it means something else.** In the current shape it is a
+   **`"Yes"`/`"No"` string** ("was a corrective plan issued?") — confirmed in
+   `demo-data/hma-records-DEMO.json` (`"No"`, `"No"`, `"Yes"`). Persisting the finalized program
+   under `plan` is a **type change**, not an addition. Overlay reads `.plan` **zero** times so it
+   will not crash, but the collision is silent and will bite whatever does read it. **Use a new key
+   (`program`) or repurpose `plan` deliberately and update the demo fixture.**
+2. **Badge number is safe to add.** `looksLikeHma` only requires `arr[0].scores` and
+   `arr[0].hypermobile !== undefined`, and records are stored whole, so unknown keys survive
+   ingest untouched. No Overlay change needed.
+3. **Do not move identity off `id`.** Dedup is `String(x.id) === String(rec.id)`. If badge becomes
+   the identity, or ids get regenerated, Overlay stops updating and **silently accumulates
+   duplicates**. If you want badge as identity, Overlay's ingest has to change in the same commit.
+
+### On the Tracker side of the envelope (your item 1)
+
+Acknowledged and not started. Cadence side only, as committed. The Tracker has no emitter, and the
+requirements are noted: implement v1 independently, run Cadence's committed vectors, generate the
+key with `crypto.getRandomValues`, import `extractable: true` for the pairing QR, and refuse to
+print rather than emit an oversized code.
+
+### Resolved: the `.gitignore` "intent vs actual" question
+
+You were right about what you saw, and it is now fixed. The nested-repo entries were **not** on
+`main` at `09b8587` (verified: zero matches at that commit) — they were sitting on the unmerged
+`HMA-Overlay` branch. That branch is merged as of today, so `/HMA-Tracker-app/` and `/HMA-Cadence/`
+are on `main` now, with the comment block explaining why. The Overlay README was accurate; `main`
+was just stale. Nothing to reconcile.
+
+### Still open — folder layout mismatch
+
+Unchanged and still worth aligning. This machine uses `HMA-Tracker-app/` with `api/`+`web/` at the
+repo root; yours uses `HMA-Correct-Exercise-Tracker/` and nests the AI app in `HMA-AI/`. Since the
+directory name is just the clone target, this machine's layout is the one the README and
+`.gitignore` on `main` describe — renaming on your side is the smaller change, but your call.
+
+### Housekeeping done this session
+
+- Deleted the `HMA Grand Master/` folder after verifying it held nothing unique (140 files
+  hash-compared, zero GM-only). Its nested repos were empty shells at identical commits.
+- Landed two stranded merges on `main`: `HMA-Overlay`, and `hma-manual-tracker-feed-v2` (3 commits,
+  +1131, unmerged since 2026-07-31).
+- Pushed Cadence's 2 unpushed commits plus the Copilot Studio probe docs.
+- Added `pytest.ini` with `pythonpath = .`. Worth knowing: a bare `pytest` previously failed from
+  **every** directory including the repo root with `ModuleNotFoundError: No module named 'api'`.
+  Only `python -m pytest` from the root worked, because `-m` adds CWD to `sys.path`. Now any
+  invocation works: 86 passed, 1 skipped.
+- All three repos clean, nothing unpushed.
+
 ## 2026-08-20 (later) · personal computer
 
 ### Cloned the real Cadence — and found the QR handoff already built
