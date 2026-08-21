@@ -155,10 +155,10 @@ measured figures against the committed vectors:
 Plus ~30 chars of URL prefix, against ~1,270 at the highest error correction. A realistic plan fits
 in one code with room to spare.
 
-**So payload slimming is not required for capacity.** It is still worth doing, for a different
-reason: sending badge number and exercise IDs instead of names and instructions means the code
-carries no identifiable health information at all. That is a privacy argument. Do not conflate the
-two when explaining this.
+**So payload slimming is not required for capacity** — and per **E12 we are not doing it.** The
+privacy case for slimming is real but small: the printed sheet the code sits on already lists every
+exercise by name. Keeping contract v1 as built avoids a shared-contract change across two sessions.
+Do not re-open this on capacity grounds; capacity was never the problem.
 
 The Tracker must still **refuse to print rather than emit an oversized, unscannable code.**
 Headroom is not a guarantee.
@@ -203,10 +203,10 @@ shoulder hurts," and is acceptable.
 |---|---|
 | A1 | **Images: build-time derivatives.** Source PNGs (36 files, 46.6 MB, ~1450×1086) are never modified. The build generates phone-sized copies for the client bundle only. Tracker keeps full quality for print. |
 | A2 | **Demo seed stays for dev and tests, stripped from production builds.** Build flag; the dead branch is eliminated at compile time so personas are physically absent from shipped files. Tests import the seed builder directly. Requires new empty states (client: "no plan yet, scan your QR"; admin: empty roster). |
-| A3 | **Library copied Tracker → Cadence once finalized.** No generator, no parity test. Version stamped into the QR; an unknown exercise ID makes the client refuse the whole plan and demand an app update rather than render a partial one. **Retired IDs are never reused or renumbered.** |
+| A3 | **Retired IDs are never reused or renumbered** — they are the join key across the Tracker, Overlay and Cadence. *(Narrowed by E12: with full content in the payload, the client needs no text library, so the copy-on-finalize step and the version-stamp refusal are gone. An ID the client has no **image** for degrades to a missing picture, not a broken plan.)* |
 | A4 | **Client is a separate build** with admin routes excluded at compile time. Consequence to accept: data returning from a personal phone is self-reported by nature and must never be treated as verified. |
 | B1 | **Client PWA served from static hosting**, installed to the phone, then fully offline. Install steps printed on the sheet; **no URL in plain text** — the EIS assists if a scan fails. |
-| B2 | **Cadence's ingest is rewired** to resolve exercise IDs against its bundled library instead of filing details out of the payload. |
+| B2 | ~~**Cadence's ingest is rewired** to resolve exercise IDs against a bundled library.~~ *(DEAD — superseded by E12. The payload carries full content, so the existing ingest works unchanged.)* |
 | B3 | **Return path is email, weekly, batch-pasted**, cumulative payload. Appointment scan retained as fallback. |
 | B4 | **Nothing on the phone is ever deleted.** Rescanning the same plan restores it; a new plan activates and archives the old one with its history intact. No appointment ordering rule needed. |
 | B5 | **HMA-AI is out of scope**, with a note recording what it must eventually emit. |
@@ -231,6 +231,7 @@ shoulder hurts," and is acceptable.
 | E9 | **Badge # optional in HMA-Manual, required at plan issue.** Anonymous single-field scoring survives. The Tracker flags a badge-less record on import so the gap surfaces before a program is built, not after. |
 | E10 | **All 24 missing exercise images sourced before the client ships.** 36 of 60 IDs currently have one; 15 of the 24 gaps are in the auto-suggestion lists, and all six trunk exercises `t1`–`t6` are missing. The gap already affects the printed sheet today, so each image fixes print immediately. |
 | E11 | **Adopt Cadence's built QR envelope v1 wholesale** (`HMA-Cadence/docs/qr-envelope.md`, built 2026-08-05). It supersedes E4 and E8: a 256-bit random key delivered by a second QR scanned off the EIS laptop, and a **pending** state that lets an employee scan first and pair weeks later. Stronger than the 4-digit setup code, and it dissolves the constraint that forced that design — nothing has to be conveyed at handover. The Tracker implements the same format independently and runs Cadence's committed test vectors. |
+| E12 | **Do not slim the payload.** Keep contract v1 as built — full exercise names and instructions in the QR. Capacity is fine (911 chars for 12 exercises) and the privacy gain is small, because the printed sheet the code sits on already lists every exercise by name in plain text. Slimming would cost a shared-contract version bump coordinated across two sessions, for something that already works and is test-pinned. **Kills B2, narrows A3, and reduces the client library to images only.** |
 
 ---
 
@@ -313,8 +314,7 @@ recomputing after the plan is stored can put different days on the paper than in
 leaves it intact. Printed days match the stored days exactly.
 
 ### Phase 3 — Library and assets
-Finalize the library in the Tracker. Copy it to Cadence with a version stamp. Reconcile the existing
-`LIBRARY` constant in `localSeed.js` (demo-only) so there is one clear owner. Add the build step that
+**Images only** (E12 removed the text-library copy). Add the build step that
 generates phone-sized image derivatives, and source the **24 missing exercise images** (E10) —
 `b2 b3 b4 b6 b7 c3 c9 co3 co5 l2 l4 l7 s5 s8 sh1 sh3 sh6 sh8 t1 t2 t3 t4 t5 t6`. Each needs a file
 in `public/images/` **and** an entry in `DEFAULT_IMAGES`; a file without a registry entry renders
@@ -345,8 +345,8 @@ Phase 4 cannot depend on a client that does not exist yet.)
 Separate build with admin routes excluded. Seed gating and empty states. Ingest rewired to the
 bundled library. Scan → if paired, decrypt and apply; if not, hold **pending** and prompt to see the EIS.
 Version-mismatch refusal. **Most of this already exists** — `src/lib/qr/` and `PairDevice.jsx` were
-built 2026-08-05. What Phase 5 actually adds is the client/admin build split, seed gating, empty
-states, and the bundled-library ingest (B2). The app PIN is a local lock only and never touches
+built 2026-08-05. What Phase 5 actually adds is the client/admin build split, seed gating and empty
+states. The bundled-library ingest is gone (E12). The app PIN is a local lock only and never touches
 decryption, so changing it is harmless; the obsolete `must_change_pin` temp-PIN flow can go.
 Once the split exists, create the Vercel project for the client build (E6).
 **Accept:** an employee scans the sheet, installs, enters their PIN, and sees the right exercises on

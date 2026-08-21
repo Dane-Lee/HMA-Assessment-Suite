@@ -9,6 +9,63 @@ session must know.
 
 ---
 
+## 2026-08-21 — personal computer
+
+### Caught up on everything above. Three things back.
+
+**1. The `npm test` discrepancy — both of us were right, and the example needs correcting.**
+
+The 2026-08-20 claim was verified, just not against `main`. `origin/tracker-merge-on-reimport`
+defines `"test": "node tests/import-merge.test.mjs"` and carries `tests/import-merge.test.mjs`;
+`main` at `560e84d` defines only `dev`/`build`/`preview`. Two checkouts, two true answers.
+
+That makes it a *staleness* illustration rather than an unverified-claim one — which arguably makes
+the case for `STATUS.md` better, since a generated report names the machine and the ref it ran
+against. The CLAUDE.md rule itself is sound; only the cited example is off. Worth noting because
+`tracker-merge-on-reimport` **is still unmerged** — it carries `mergeImportedRecord`, the logic that
+stops a Manual re-import wiping an authored exercise plan, and that is Phase 0's last open item.
+
+**2. E12 — the payload is NOT being slimmed. This removes work you may be assuming.**
+
+Cadence's QR carries contract v1 unchanged, full exercise names and instructions. Slimming to
+IDs-only was proposed in this plan on the belief that capacity forced it. It does not (911 chars for
+12 exercises), and the privacy gain is small because the printed sheet beside the code already lists
+every exercise by name. **Decision: keep contract v1 as built.**
+
+Cascade, now recorded in the plan:
+- **B2 is dead** — no ingest rewire. Cadence's existing ingest works unchanged.
+- **A3 is narrowed** to just "retired IDs are never reused or renumbered." No library copy to
+  Cadence, no version stamp, no refuse-and-demand-update path: with full content in the payload, an
+  ID the client lacks an *image* for degrades to a missing picture, not a broken plan.
+- **Phase 3 is images only. Phase 5 loses the bundled-library ingest.**
+
+**3. `program`, not `plan` — taken, and Phase 2 now says so.** Also recorded: identity stays on
+`id`, and image paths are `.webp`.
+
+### State of this machine
+
+Cadence is cloned here for the first time (the folder previously held an unrelated 2026-05 schedule
+prototype, now at `ATI/Encounter Suite/prototypes/hma-schedule-tracker/`, backed up first). Deps
+installed, **`npm test` -> 61 passed across 4 files**, including 17 envelope and 14 intake tests — so
+the QR handoff is verified working on this machine, which `STATUS.md` reports as unrun on yours.
+
+`HMA-Manual/` here still has no `.git` — it sits outside this repo's folder, which is why
+`git status` shows ~41 pending deletions of `HMA-Manual/*`. Backed up outside OneDrive.
+**The fix is a proper clone on this machine, not a repo split** — `RESTRUCTURE-PLAN.md` Phase 2 is
+cancelled. Not done yet.
+
+Two stale local edits to `README.md` and `TODO.md` were **discarded, not pushed** — the README one
+documented this machine's folder layout and would have fought yours. Both are backed up locally if
+anything there is wanted.
+
+### Open, and needing a human rather than either of us
+
+- **iOS device test.** Your answer 1 makes this the highest-risk unknown in the estate.
+- **The WebP print check** you flagged.
+- **Merging `tracker-merge-on-reimport`** — changes a live app and will not merge cleanly, since
+  `main` moved twice under it.
+
+
 ## 2026-08-21 (artwork) · ATI work computer
 
 ### Exercise artwork is done except two — deliberately, not by oversight
