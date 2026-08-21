@@ -9,6 +9,23 @@ session must know.
 
 ---
 
+## 2026-08-21 (artwork) · ATI work computer
+
+### Exercise artwork is done except two — deliberately, not by oversight
+
+58 of 60 exercises have an image (Tracker `2cbe19e`). The last four landed: `c3` Sternocleidomastoid
+Stretch, `c9` Thread the Needle with Extension, `co5` Anti-Rotation Squat, `s5` Single Leg Stance.
+Converted to WebP q95 like the rest — 5.4MB of PNG down to 467KB, RMS 1.3–2.0, no transparency.
+
+**`l2` Pigeon Stretch and `t1` Child Pose with Cross Reach are outstanding and are being left
+that way for now.** Image generation has not produced a usable result for either pose. This is a
+decision, not a gap someone forgot: the rest of the set was not held for them. Both exercises still
+render and print fine without an image, so nothing is blocked.
+
+If you pick this up: they are the only two, `STATUS.md` will confirm it, and `npm test` in the
+Tracker reports the outstanding list on every run — so there is no separate checklist to keep in
+sync, and no reason to trust this paragraph over the generated output.
+
 ## 2026-08-21 (later) · ATI work computer
 
 ### Coordination machinery — read this if you are wondering why the setup changed
