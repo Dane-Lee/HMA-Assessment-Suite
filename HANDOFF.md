@@ -37,8 +37,10 @@ That auto-merge is verified, not assumed. Your import-merge test extracts the re
 original. Confirmed alongside it that the image work survived — 58 `DEFAULT_IMAGES` entries, `t9`
 present, `s8` still retired — and the build passes.
 
-**It sits on a local branch `trial-merge-reimport` and is not pushed**, because it changes a live
-app that auto-deploys and that is the human's call, not mine. If nobody lands it, the resolution is
+**It is pushed as `origin/trial-merge-reimport` but deliberately not merged to `main`**, because
+landing it deploys a live app and that is the human's call, not mine. Pushing the branch is the
+point of rule 4 — you can see it, review it, or land it yourself without me having deployed anything.
+I had initially left it local, which was my own rule broken within a day of writing it. If nobody lands it, the resolution is
 recorded here: one conflict, one line, keep both test commands.
 
 ### Acknowledged from your entry
