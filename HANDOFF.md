@@ -9,6 +9,58 @@ session must know.
 
 ---
 
+## 2026-08-21 · ATI work computer
+
+### Tracker exercise-ID changes — read before touching the library
+
+Two changes to the **shared exercise IDs**. These are the public identifiers joining Tracker,
+Overlay and Cadence, so both are recorded here rather than left in one repo's history.
+
+**`s8` "Single Leg Balance Clock" is RETIRED** (Tracker `561904f`). It was a duplicate of `b7`
+"Single Leg Clock Balance" — identical sets (`3 rounds each side`), type (dynamic stabilization),
+target (`single-leg-balance`) and category (`sld`), with instructions differing only in wording.
+`CAT_EXERCISES.sld` concatenates `EXERCISES.sld` with `BALANCE_EX`, so both surfaced in the **same
+picker** under near-anagram names and one plan could prescribe the movement twice. `b7` is kept.
+**The ID is retired, not reused, and nothing was renumbered.** Nothing in Overlay, Cadence or the
+docs referenced `s8` — verified by grep across the estate before removing it.
+
+**`t9` "Prone Scapular Retraction \"I\"" is NEW** (Tracker `6307736`). Completes the Y/W/T/I family
+alongside `sh5` (Y), `t4` (W) and `t5` (T), matching their sets, type, duration and target. Placed
+after `t5` in the trunk picker so the family reads together. `t9` was unused estate-wide before use.
+
+Library is **60 exercises** (was 60, minus `s8`, plus `t9`).
+
+### Exercise images are now WebP, not PNG
+
+All 53 images converted to WebP q95: **71MB → 7MB, 91% smaller**. `DEFAULT_IMAGES` repointed to
+`.webp`. Verified per file — no dimension changes, RMS difference 1.2–1.9 (imperceptible, checked
+visually at 2x on the worst case), and no image used transparency, so nothing was flattened.
+
+This matters beyond the Tracker: the images are drawn from `DEFAULT_IMAGES` keyed by exercise ID,
+so **any consumer that assumed `.png` will break**. Nothing does today, but the pipeline plan has
+the finalized program persisting onto the record, and if image paths ever travel with a plan they
+travel as `.webp` now.
+
+**54 of 60 exercises have an image.** Still missing: `l2` Pigeon Stretch, `t1` Child Pose with
+Cross Reach, `c3` Sternocleidomastoid Stretch, `c9` Thread the Needle with Extension, `co5` Anti
+Rotation Squat, `s5` Single Leg Stance.
+
+### Unverified — someone should check this on paper
+
+The WebP swap changed **every printed plan image at once**, and the Tracker auto-deploys to Vercel
+on push, so it is already live. The conversion verified clean locally and the build passes, but
+**it has not been checked on an actual printed sheet.** Worth one print before the next handover —
+local verification and "looks right on paper" are not the same check, and paper is where these are
+actually used.
+
+### Note on the Tracker's test suite
+
+`HMA-Tracker-app/package.json` defines only `dev`, `build` and `preview` — **there is no `test`
+script.** The 2026-08-20 entry records "Tracker `npm install` was run; `npm test` passes" on the
+personal machine, which cannot be right against this package.json. Either that clone has diverged
+or the result was misread. Verification here was `vite build` plus a scripted integrity check of
+the library (no orphan map keys, no exercise missing map entries, every image path resolving).
+
 ## 2026-08-20 (later still) · ATI work computer
 
 ### Merged this branch to main, and answers to both questions
