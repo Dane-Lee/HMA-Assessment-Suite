@@ -16,8 +16,50 @@ from dead history.
 3. **Append an entry to [HANDOFF.md](HANDOFF.md) before finishing** — what you did, what you
    decided, *why*, and anything the other session must know before it touches the same area.
    Newest entry at the top. Commit it with the work it describes.
+4. **Push before you stop, even when the work is unfinished.** Unpushed work is invisible work —
+   the other machine cannot see a local commit, an unversioned folder, or an uncommitted file. If
+   the work is not ready for `main`, push it to a **branch**. A branch makes it visible without
+   merging it into anything, which is the whole point: you get to avoid the collision *and* the
+   other session gets to know the work exists.
+5. **Never record a claim you did not verify.** See "Facts, not claims" below.
 
 An entry is not optional bookkeeping. It is the only channel between the two sessions.
+
+Rule 2 is now also enforced by a **SessionStart hook** (`tools/session-start-check.mjs`, wired in
+`.claude/settings.json`) that fetches all three repos and prints staleness plus the newest handoff
+heading before either session types anything. The hook exists because rule 2 was already written
+here on 2026-08-20 and a session still went stale — a document is advisory, a hook is not. Do not
+treat the hook as a substitute for reading HANDOFF.md; it prints one heading, not the entry.
+
+## Facts, not claims
+
+The 2026-08-20 handoff recorded *"Tracker `npm install` was run; `npm test` passes."* The Tracker
+had **no `test` script at all** — `npm test` there would have failed outright. Nobody could check
+the claim, and it cost the other session real time before it was disproved.
+
+So: **`STATUS.md` is generated, never written.** Run `node tools/estate-status.mjs` to regenerate
+it. Everything in it is the output of a command that actually ran on the machine named at the top —
+repo HEADs and ahead/behind, which check commands genuinely exist and what they returned, how many
+exercises still lack artwork. A check that could not run says so; *"deps not installed here"* is a
+fact, silence is not.
+
+When you want to tell the other session that something works, **make it verifiable** — commit a
+test, or regenerate `STATUS.md` — rather than asserting it in prose. Prose in HANDOFF.md is for
+decisions and reasoning, which cannot be generated. State is for `STATUS.md`.
+
+## No fixed ownership split — which raises the stakes
+
+Work is divided **opportunistically**, not by app or by layer (decided 2026-08-21). Either machine
+may touch anything.
+
+That is a deliberate choice, and it has a cost worth naming: the two sessions collided on
+2026-08-20 because both independently designed the same QR handoff, and nothing structural prevents
+that happening again. With no lanes, the handoff log, `STATUS.md` and the startup hook carry the
+**entire** coordination load. Under a split you could get away with a thin log; here you cannot.
+
+Practical consequence: **before starting any substantial piece of design, check HANDOFF.md and
+`STATUS.md` for whether the other session is already on it.** Duplicated design is the specific
+failure this estate has already had once.
 
 ## Where the plans live
 
@@ -27,6 +69,31 @@ An entry is not optional bookkeeping. It is the only channel between the two ses
 - **[RESTRUCTURE-PLAN.md](RESTRUCTURE-PLAN.md)** — repo topology history. **Its Manual-split proposal
   is cancelled** (see HANDOFF 2026-08-20); kept for the Cadence-clone procedure and its audit record.
 - **[TODO.md](TODO.md)** — AI app + Manual app task list.
+- **[STATUS.md](STATUS.md)** — **generated, do not edit.** Current repo/check/artwork state as
+  derived facts. Regenerate with `node tools/estate-status.mjs`.
+
+## Checks that actually exist
+
+Run these rather than assuming — and note the machine each was last run on, since dependencies are
+not installed everywhere.
+
+| what | command | from |
+|---|---|---|
+| Tracker exercise library | `npm test` | `HMA-Tracker-app/` |
+| Tracker build | `npm run build` | `HMA-Tracker-app/` |
+| API + Manual API | `pytest` | repo root |
+| Estate status | `node tools/estate-status.mjs` | repo root |
+
+`pytest` needs the repo root on `sys.path`; `pytest.ini` handles that, so a bare `pytest` works from
+any directory. Before that file existed it failed *everywhere*, including the root, and only
+`python -m pytest` worked — if you see `ModuleNotFoundError: No module named 'api'`, check that
+`pytest.ini` is still present rather than changing how you invoke it.
+
+The Tracker suite checks the five parallel structures keyed by exercise id stay in agreement, that
+retired ids are not revived, and that no two exercises in the same picker are near-duplicates. That
+last check exists because `s8` and `b7` were the same exercise under near-anagram names, both
+reachable from the `sld` picker. **Adding an exercise means touching five structures plus
+`DEFAULT_IMAGES` — run `npm test` after, it will tell you what you missed.**
 
 ## Repo topology (decided 2026-08-20)
 

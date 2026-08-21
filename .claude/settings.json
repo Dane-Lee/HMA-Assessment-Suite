@@ -17,5 +17,19 @@
       "Bash(node gen.mjs)",
       "Read(//c/Users/dane.lee/Alternate Desktop/Dane - Coding Projects/**)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/session-start-check.mjs\" 2>/dev/null || true",
+            "timeout": 45,
+            "statusMessage": "Checking HMA estate staleness..."
+          }
+        ]
+      }
+    ]
   }
 }

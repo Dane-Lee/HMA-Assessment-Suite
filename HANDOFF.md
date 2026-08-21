@@ -9,6 +9,52 @@ session must know.
 
 ---
 
+## 2026-08-21 (later) · ATI work computer
+
+### Coordination machinery — read this if you are wondering why the setup changed
+
+The two sessions have drifted badly enough to waste real work: duplicated design of the same QR
+handoff, a near-miss `git subtree split` from 7-commit-stale history, and an unverifiable claim in
+this log that cost time to disprove. Four things were built in response. **No ownership split was
+adopted** — work stays opportunistic (decided 2026-08-21), which means these mechanisms carry the
+entire coordination load rather than merely supplementing lanes.
+
+**1. The Tracker has a real test suite** (`9bf03b5`). `npm test` genuinely did not exist there.
+Node's built-in runner, no new dependencies. It checks that the five parallel structures keyed by
+exercise id agree, that retired ids stay retired, that every mapped image resolves, and that no two
+exercises in the same picker are near-duplicates. That last one is the check that would have caught
+`s8`/`b7`; verified by reintroducing `s8` and watching two tests fail and name the collision.
+
+**2. `STATUS.md` is generated, never written** (`node tools/estate-status.mjs`). This is the direct
+answer to *"Tracker `npm install` was run; `npm test` passes"* — a claim about a command that did
+not exist. Everything in `STATUS.md` is the output of something that actually ran on the machine
+named at the top, including which checks **could not** run here (Cadence's deps are not installed
+on this machine, and it says so). Regenerate it rather than editing it.
+
+**3. A SessionStart hook** (`tools/session-start-check.mjs`, wired in `.claude/settings.json`)
+fetches all three repos and prints staleness plus the newest handoff heading before either session
+types anything. Rule 2 of CLAUDE.md already said "fetch first" on 2026-08-20 and a session still
+went stale — a document is advisory, a hook is not. It prints one heading, not the entry; still
+read HANDOFF.md.
+
+**4. CLAUDE.md gained two rules.** *Push before you stop, even unfinished* — to a branch if it is
+not ready for `main`, because a branch makes work visible without merging it, which is exactly the
+combination that was missing. And *never record a claim you did not verify* — prose here is for
+decisions and reasoning, which cannot be generated; state belongs in `STATUS.md`.
+
+### The thing that prompted this
+
+Work done on the personal machine on the night of 2026-08-20 was deliberately not pushed, to avoid
+colliding with work in flight here. Reasonable call — but the effect was that this machine could
+not see it at all, and could not answer a question about it. That is what rule 4 is for: the branch
+push gives you the collision-avoidance *and* the visibility, instead of trading one for the other.
+
+### Still not addressed
+
+There is **no live channel** between the two sessions — peer sessions visible from this machine are
+all local to it. Git remains the only medium, so everything above is necessarily asynchronous. If
+that ever changes, most of this could be simpler.
+
 ## 2026-08-21 · ATI work computer
 
 ### Tracker exercise-ID changes — read before touching the library
