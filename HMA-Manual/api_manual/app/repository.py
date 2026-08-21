@@ -13,6 +13,7 @@ from .database import get_connection
 # Optional identity details captured alongside the participant name. Every one is
 # free text, defaults to "", and feeds the Corrective Exercise Tracker export.
 ASSESSMENT_DETAIL_FIELDS = (
+    "employee_number",
     "first_name",
     "last_name",
     "company",
@@ -257,14 +258,14 @@ class ManualRepository:
             connection.execute(
                 """
                 INSERT INTO manual_assessments (
-                    id, participant_name, first_name, last_name, company,
+                    id, participant_name, employee_number, first_name, last_name, company,
                     department, shift, work_location,
                     employee_id, created_by_provider_id,
                     status, total_score, score_band, has_oa, consent_notice_version,
                     consent_scope_json, created_at, retention_expires_at
                 )
                 VALUES (
-                    :id, :participant_name, :first_name, :last_name, :company,
+                    :id, :participant_name, :employee_number, :first_name, :last_name, :company,
                     :department, :shift, :work_location,
                     :employee_id, :created_by_provider_id,
                     :status, :total_score, :score_band, :has_oa, :consent_notice_version,

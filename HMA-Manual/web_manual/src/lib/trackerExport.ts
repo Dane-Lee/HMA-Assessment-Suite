@@ -23,6 +23,11 @@ type TrackerSideScore = { val: number | null; pain: boolean };
 
 export type TrackerRecord = {
   id: string;
+  // Badge #. Named `badge` to match the Tracker's own short field names; it maps
+  // to `employee.employee_number` when the Tracker builds a Cadence plan payload.
+  // Optional here — anonymous scoring stays valid — but Cadence rejects a plan
+  // without one, so the Tracker flags a blank badge on import.
+  badge: string;
   fname: string;
   lname: string;
   name: string;
@@ -112,6 +117,7 @@ export function buildTrackerRecord(assessment: ManualAssessmentDetail): TrackerR
 
   return {
     id: assessment.id,
+    badge: firstNonEmpty(assessment.employee_number),
     fname,
     lname,
     name: firstNonEmpty([fname, lname].join(" "), assessment.participant_name),

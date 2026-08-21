@@ -163,6 +163,7 @@ def test_optional_employee_details_round_trip_and_default_blank() -> None:
     login(client)
 
     details = {
+        "employee_number": "4412",
         "first_name": "Casey",
         "last_name": "Jones",
         "company": "Navarre",

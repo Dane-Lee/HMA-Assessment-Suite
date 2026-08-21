@@ -7,6 +7,7 @@ import { buildConsentPayload, PRIVACY_POSTURE_STATEMENT } from "../lib/privacy";
 import type { AssessmentDetails } from "../lib/types";
 
 const DETAIL_FIELDS: Array<{ key: keyof AssessmentDetails; label: string }> = [
+  { key: "employee_number", label: "Badge #" },
   { key: "first_name", label: "First Name" },
   { key: "last_name", label: "Last Name" },
   { key: "company", label: "Company" },
@@ -16,6 +17,7 @@ const DETAIL_FIELDS: Array<{ key: keyof AssessmentDetails; label: string }> = [
 ];
 
 const EMPTY_DETAILS: AssessmentDetails = {
+  employee_number: "",
   first_name: "",
   last_name: "",
   company: "",

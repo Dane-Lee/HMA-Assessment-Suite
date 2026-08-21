@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS employees (
 CREATE TABLE IF NOT EXISTS manual_assessments (
     id TEXT PRIMARY KEY,
     participant_name TEXT NOT NULL,
+    employee_number TEXT NOT NULL DEFAULT '',
     first_name TEXT NOT NULL DEFAULT '',
     last_name TEXT NOT NULL DEFAULT '',
     company TEXT NOT NULL DEFAULT '',
@@ -153,6 +154,9 @@ _ADDED_COLUMNS: dict[str, dict[str, str]] = {
         "has_oa": "INTEGER NOT NULL DEFAULT 0",
         # Optional identity details. Blank unless the provider fills them in;
         # they populate the Corrective Exercise Tracker's employee fields.
+        # employee_number is the badge #: optional here so anonymous scoring stays
+        # one field, but required downstream before a plan can reach Cadence.
+        "employee_number": "TEXT NOT NULL DEFAULT ''",
         "first_name": "TEXT NOT NULL DEFAULT ''",
         "last_name": "TEXT NOT NULL DEFAULT ''",
         "company": "TEXT NOT NULL DEFAULT ''",

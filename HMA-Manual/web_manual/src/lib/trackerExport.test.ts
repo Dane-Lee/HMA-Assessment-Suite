@@ -96,6 +96,7 @@ describe("buildTrackerRecord", () => {
     const record = buildTrackerRecord(
       assessment({
         participant_name: "EMP-4471",
+        employee_number: "4412",
         first_name: "Casey",
         last_name: "Jones",
         company: "Navarre",
@@ -107,11 +108,19 @@ describe("buildTrackerRecord", () => {
     expect(record.fname).toBe("Casey");
     expect(record.lname).toBe("Jones");
     expect(record.name).toBe("Casey Jones");
+    expect(record.badge).toBe("4412");
     // explicit company wins over the linked employee's employer
     expect(record.company).toBe("Navarre");
     expect(record.dept).toBe("Weld");
     expect(record.shift).toBe("2nd");
     expect(record.location).toBe("Line 3");
+  });
+
+  it("leaves the badge blank when the provider did not enter one", () => {
+    // Anonymous scoring stays valid end to end: a blank badge exports as "", never
+    // a placeholder. Cadence rejects a plan without one, so the Tracker is where
+    // that gap gets surfaced -- not here.
+    expect(buildTrackerRecord(assessment({ participant_name: "Mary Jo Smith" })).badge).toBe("");
   });
 
   it("splits a fallback name on the LAST space so multi-word first names survive", () => {

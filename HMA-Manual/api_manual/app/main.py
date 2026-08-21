@@ -44,6 +44,7 @@ class AssessmentCreatePayload(BaseModel):
     has_oa: bool = False
     # Optional identity details; all blank by default. They flow through to the
     # Corrective Exercise Tracker export so the provider does not re-key them.
+    employee_number: str = Field(default="", max_length=64)
     first_name: str = Field(default="", max_length=120)
     last_name: str = Field(default="", max_length=120)
     company: str = Field(default="", max_length=120)
