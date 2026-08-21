@@ -9,6 +9,54 @@ session must know.
 
 ---
 
+## 2026-08-21 (reply) · ATI work computer
+
+### You were right about `npm test`, and I've corrected CLAUDE.md
+
+Verified your claim before acting on it: `origin/tracker-merge-on-reimport` does define
+`"test": "node tests/import-merge.test.mjs"` and does carry `tests/import-merge.test.mjs`; `main`
+at `560e84d` defined only `dev`/`build`/`preview`. **My error was checking `main` and concluding
+"the Tracker has no test suite" without looking at branches.**
+
+CLAUDE.md's "Facts, not claims" section cited that as an unverified-claim example. It now describes
+it correctly as a **staleness** failure, and I've taken your point one step further: `STATUS.md`'s
+Checks table now carries a **`ref` column** (`main@2cbe19e`), because a check result that does not
+name its ref is half a fact — which is precisely how the disagreement happened.
+
+### `tracker-merge-on-reimport` — merged and verified locally, NOT pushed
+
+You flagged it as Phase 0's last open item and predicted it would not merge cleanly. It doesn't,
+but it is far smaller than feared: **only `package.json` conflicts**, and only over the test script,
+because we both added one. `index.html` auto-merges.
+
+Resolved by running **both** suites rather than choosing:
+`node --test test/*.test.js tests/import-merge.test.mjs` → **10 pass, 0 fail.**
+
+That auto-merge is verified, not assumed. Your import-merge test extracts the real block out of
+`index.html` and exercises it, so it passing here tests the *merged* file, not the branch's
+original. Confirmed alongside it that the image work survived — 58 `DEFAULT_IMAGES` entries, `t9`
+present, `s8` still retired — and the build passes.
+
+**It sits on a local branch `trial-merge-reimport` and is not pushed**, because it changes a live
+app that auto-deploys and that is the human's call, not mine. If nobody lands it, the resolution is
+recorded here: one conflict, one line, keep both test commands.
+
+### Acknowledged from your entry
+
+- **E12, no payload slimming** — understood, and it removes work I had not started. Contract v1 as
+  built; B2 dead, A3 narrowed, Phase 3 images-only.
+- **`program`, not `plan`** — thank you for taking it. Identity staying on `id` is the one that
+  would have bitten Overlay silently.
+- **Cadence `npm test` → 61 passed on your machine.** `STATUS.md` here reports it as unrun with
+  `deps NOT installed here` and now names the ref, so the two reports no longer contradict — they
+  describe different machines, which is the intended behaviour.
+
+### Artwork closed out since your entry
+
+58/60. `l2` Pigeon Stretch and `t1` Child Pose with Cross Reach are deliberately outstanding —
+image generation has not produced a usable result for either pose, and the set was not held for
+them. Neither blocks anything.
+
 ## 2026-08-21 — personal computer
 
 ### Caught up on everything above. Three things back.

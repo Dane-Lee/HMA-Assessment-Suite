@@ -45,37 +45,49 @@ function repoRow({ name, dir }) {
   return { name, remote, branch, head, ahead, behind, dirty };
 }
 
-/* Which check commands genuinely exist, and what they return when run here. */
+/* Which check commands genuinely exist, and what they return when run here.
+
+   Each row names the ref it ran against. A check result without a ref is what
+   caused the 2026-08-20/21 npm-test disagreement: the same command was truthfully
+   "passing" on one branch and absent on another, and the claim recorded neither. */
+function refOf(dir) {
+  const cwd = path.join(root, dir);
+  const b = sh('git rev-parse --abbrev-ref HEAD', cwd).out;
+  const h = sh('git rev-parse --short HEAD', cwd).out;
+  return b && h ? `${b}@${h}` : 'unknown ref';
+}
+
 function checks() {
   const rows = [];
 
   for (const app of ['HMA-Tracker-app', 'HMA-Cadence']) {
+    const ref = refOf(app);
     const pkg = path.join(root, app, 'package.json');
-    if (!fs.existsSync(pkg)) { rows.push([app, 'npm test', 'no package.json', '—']); continue; }
+    if (!fs.existsSync(pkg)) { rows.push([app, 'npm test', 'no package.json', '—', ref]); continue; }
     const scripts = JSON.parse(fs.readFileSync(pkg, 'utf8')).scripts || {};
-    if (!scripts.test) { rows.push([app, 'npm test', 'NO test script defined', '—']); continue; }
+    if (!scripts.test) { rows.push([app, 'npm test', 'NO test script defined', '—', ref]); continue; }
     if (!fs.existsSync(path.join(root, app, 'node_modules'))) {
-      rows.push([app, 'npm test', 'defined, deps NOT installed here', 'not run']);
+      rows.push([app, 'npm test', 'defined, deps NOT installed here', 'not run', ref]);
       continue;
     }
     const r = sh('npm test --silent', path.join(root, app));
     const m = r.out.match(/# pass (\d+)[\s\S]*?# fail (\d+)/);
-    rows.push([app, 'npm test', 'defined', m ? `${m[1]} pass, ${m[2]} fail` : (r.ok ? 'passed' : 'FAILED')]);
+    rows.push([app, 'npm test', 'defined', m ? `${m[1]} pass, ${m[2]} fail` : (r.ok ? 'passed' : 'FAILED'), ref]);
   }
 
   const venv = path.join(root, '.venv', 'Scripts', 'python.exe');
   const py = fs.existsSync(venv) ? venv : (fs.existsSync(path.join(root, '.venv/bin/python')) ? path.join(root, '.venv/bin/python') : null);
   if (!py) {
-    rows.push(['api + HMA-Manual', 'pytest', 'no .venv here', 'not run']);
+    rows.push(['api + HMA-Manual', 'pytest', 'no .venv here', 'not run', refOf('.')]);
   } else {
     const r = sh(`"${py}" -m pytest -q`);
     const m = r.out.match(/(\d+) passed(?:, (\d+) skipped)?|(\d+) failed/);
-    rows.push(['api + HMA-Manual', 'pytest', '.venv present', m ? m[0] : (r.ok ? 'passed' : 'FAILED')]);
+    rows.push(['api + HMA-Manual', 'pytest', '.venv present', m ? m[0] : (r.ok ? 'passed' : 'FAILED'), refOf('.')]);
   }
 
   for (const app of ['HMA-Tracker-app']) {
     const r = sh('npm run build --silent', path.join(root, app));
-    rows.push([app, 'npm run build', 'defined', r.ok ? 'builds' : 'FAILED']);
+    rows.push([app, 'npm run build', 'defined', r.ok ? 'builds' : 'FAILED', refOf(app)]);
   }
   return rows;
 }
@@ -116,9 +128,12 @@ L.push('remote disagree — resolve that before trusting anything else on this p
 L.push('');
 L.push('## Checks');
 L.push('');
-L.push('| app | command | available | result |');
-L.push('|---|---|---|---|');
-for (const c of chk) L.push(`| ${c[0]} | \`${c[1]}\` | ${c[2]} | ${c[3]} |`);
+L.push('| app | command | available | result | ref |');
+L.push('|---|---|---|---|---|');
+for (const c of chk) L.push(`| ${c[0]} | \`${c[1]}\` | ${c[2]} | ${c[3]} | ${c[4] || '?'} |`);
+L.push('');
+L.push('The `ref` column is the point: the same command can be truthfully passing on one branch and');
+L.push('absent on another. A result without a ref is not a fact, it is half of one.');
 L.push('');
 if (art) {
   L.push('## Exercise artwork');

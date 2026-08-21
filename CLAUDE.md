@@ -33,9 +33,15 @@ treat the hook as a substitute for reading HANDOFF.md; it prints one heading, no
 
 ## Facts, not claims
 
-The 2026-08-20 handoff recorded *"Tracker `npm install` was run; `npm test` passes."* The Tracker
-had **no `test` script at all** — `npm test` there would have failed outright. Nobody could check
-the claim, and it cost the other session real time before it was disproved.
+The 2026-08-20 handoff recorded *"Tracker `npm install` was run; `npm test` passes."* The other
+session read that, found only `dev`/`build`/`preview` on `main`, and concluded the claim was
+invented. **Both were right.** `origin/tracker-merge-on-reimport` defined a `test` script and
+carried the test file; `main` did not. Two checkouts, two true answers, and a day lost to the
+disagreement.
+
+So this is a **staleness** failure, not a dishonesty one — which is a stronger argument for
+generated state, not a weaker one. Prose says "npm test passes" and omits the one thing that
+decides whether it is true: *which ref, on which machine.* A generated report cannot omit it.
 
 So: **`STATUS.md` is generated, never written.** Run `node tools/estate-status.mjs` to regenerate
 it. Everything in it is the output of a command that actually ran on the machine named at the top —
